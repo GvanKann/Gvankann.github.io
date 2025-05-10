@@ -1,13 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>HTML 5 Boilerplate</title>
+    <title>TweetBlog</title>
     <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-	<script src="index.js"></script>
-  </body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header section (similar to Twitter header) -->
+        <header class="profile-header">
+            <div class="banner">
+                <img src="/images/cover_image.jpg" alt="Banner Image">
+            </div>
+            <div class="profile-info">
+                <div class="profile-picture">
+                    <img src="/images/profile_picture.jpg" alt="Profile Picture">
+                </div>
+                <div class="profile-details">
+                    <h1 class="name">John Doe</h1>
+                    <p class="username">@johndoe</p>
+                    <p class="bio">Developer, writer, and coffee enthusiast. Sharing thoughts on tech, life, and everything in between.</p>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="count" id="post-count">0</span>
+                            <span class="label">Posts</span>
+                        </div>
+                        <div class="stat">
+                            <span class="count">42</span>
+                            <span class="label">Following</span>
+                        </div>
+                        <div class="stat">
+                            <span class="count">128</span>
+                            <span class="label">Followers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main content with posts/tweets -->
+        <main class="content">
+            <div class="tabs">
+                <button class="tab active">Posts</button>
+                <button class="tab">About</button>
+                <button class="tab">Archives</button>
+            </div>
+            
+            <div class="posts-container" id="posts-container">
+                <!-- Posts will be dynamically inserted here by JavaScript -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading posts...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for displaying full post content -->
+    <div id="post-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="full-post-content"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
 </html>

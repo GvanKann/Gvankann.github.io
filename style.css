@@ -1,0 +1,392 @@
+/* Base Styles & Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f7f9fa;
+    color: #14171a;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    min-height: 100vh;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header & Profile Styles */
+.profile-header {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.banner {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info {
+    position: relative;
+    padding: 0 15px;
+}
+
+.profile-picture {
+    position: absolute;
+    top: -60px;
+    left: 15px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    overflow: hidden;
+    background-color: #f0f0f0;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-details {
+    padding-top: 70px;
+    padding-bottom: 15px;
+}
+
+.name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.username {
+    color: #657786;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.bio {
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.stats {
+    display: flex;
+    gap: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #e6ecf0;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.count {
+    font-weight: bold;
+    color: #14171a;
+}
+
+.label {
+    color: #657786;
+    font-size: 14px;
+}
+
+/* Tabs Navigation */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e6ecf0;
+}
+
+.tab {
+    flex: 1;
+    padding: 15px 0;
+    text-align: center;
+    background: none;
+    border: none;
+    font-weight: bold;
+    color: #657786;
+    cursor: pointer;
+    position: relative;
+}
+
+.tab.active {
+    color: #1da1f2;
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #1da1f2;
+}
+
+/* Posts (Tweets) styling */
+.posts-container {
+    padding: 15px;
+}
+
+.post {
+    padding: 15px 0;
+    border-bottom: 1px solid #e6ecf0;
+    cursor: pointer;
+}
+
+.post:hover {
+    background-color: #f5f8fa;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.post-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-right: 10px;
+    overflow: hidden;
+}
+
+.post-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.post-info {
+    flex-grow: 1;
+}
+
+.post-author {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.post-username, .post-date {
+    color: #657786;
+    font-size: 14px;
+}
+
+.post-title {
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 16px;
+}
+
+.post-content {
+    margin-bottom: 10px;
+    word-wrap: break-word;
+}
+
+.post-actions {
+    display: flex;
+    gap: 50px;
+    padding-top: 10px;
+    color: #657786;
+}
+
+.post-action {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+}
+
+.post-action i {
+    font-size: 18px;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    text-align: center;
+    padding: 40px 0;
+    color: #657786;
+}
+
+.loading-spinner i {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+/* Modal Styles for Full Post */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fff;
+    max-width: 650px;
+    margin: 50px auto;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #657786;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: #14171a;
+}
+
+#full-post-content {
+    padding: 15px 0;
+}
+
+#full-post-content .post-header {
+    margin-bottom: 20px;
+}
+
+#full-post-content .post-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+#full-post-content .post-meta {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: #657786;
+    font-size: 14px;
+}
+
+/* Markdown styling for full post */
+.markdown-content h1 {
+    font-size: 28px;
+    margin: 25px 0 15px;
+}
+
+.markdown-content h2 {
+    font-size: 24px;
+    margin: 22px 0 12px;
+}
+
+.markdown-content h3 {
+    font-size: 20px;
+    margin: 20px 0 10px;
+}
+
+.markdown-content p {
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+.markdown-content ul, .markdown-content ol {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+
+.markdown-content li {
+    margin: 5px 0;
+}
+
+.markdown-content blockquote {
+    border-left: 3px solid #1da1f2;
+    padding-left: 15px;
+    color: #657786;
+    margin: 15px 0;
+}
+
+.markdown-content code {
+    background-color: #f1f3f4;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.markdown-content pre {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+.markdown-content pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.markdown-content hr {
+    border: none;
+    border-top: 1px solid #e6ecf0;
+    margin: 25px 0;
+}
+
+.markdown-content a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+.markdown-content a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .profile-picture {
+        width: 80px;
+        height: 80px;
+        top: -40px;
+    }
+    
+    .profile-details {
+        padding-top: 50px;
+    }
+    
+    .banner {
+        height: 150px;
+    }
+    
+    .post-actions {
+        gap: 30px;
+    }
+    
+    .modal-content {
+        margin: 30px 15px;
+    }
+}
