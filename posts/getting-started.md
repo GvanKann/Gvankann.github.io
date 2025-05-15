@@ -1,16 +1,42 @@
 ---
 title: Getting Started with TweetBlog
-date: 2025-05-01
-tags: [Tech, Books]
+date: 2023-08-15
+tags: [web development, tutorial, beginners]
 ---
 
 # Getting Started with TweetBlog
 
-Welcome to TweetBlog! This is your new Twitter-inspired blog platform. Here's how to get the most out of it.
+Welcome to TweetBlog! This post will help you understand how to use this Twitter-like blog platform.
 
 ## What is TweetBlog?
 
-TweetBlog combines the familiar interface of Twitter with the extended writing capabilities of a blog. Each "tweet" on your profile page is actually a preview of a longer blog post. This gives you the best of both worlds: a clean, familiar timeline view for your readers, with the ability to dive deeper into topics you care about.
+TweetBlog is a simple, lightweight blogging platform that displays your posts in a Twitter-like interface. It's perfect for short-form content, thoughts, and updates.
+
+## How to Create Posts
+
+Creating posts is easy:
+
+1. Create a new markdown file in the `posts` directory
+2. Add front matter at the top of the file (title, date, tags)
+3. Write your content in Markdown format
+4. Add the filename to the `posts-manifest.json` file
+
+## Markdown Support
+
+TweetBlog supports basic Markdown formatting:
+
+- **Bold text** using `**bold**`
+- *Italic text* using `*italic*`
+- Code blocks using backticks
+- Lists (ordered and unordered)
+- Links and images
+- Headings (h1 through h6)
+
+## Tag System
+
+Tags are a great way to categorize your posts. Users can click on tags to filter posts by topic.
+
+Happy blogging!
 
 ## How to Customize Your Profile
 

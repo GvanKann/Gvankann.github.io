@@ -1,19 +1,11 @@
 /**
  * TweetBlog - A Twitter-like blog interface
- * This script handles loading blog posts from Markdown files and displaying them 
- * as Twitter-style "tweets" on the main page.
+ * This script handles loading blog posts from Markdown files (listed in a manifest) 
+ * and displaying them as Twitter-style "tweets" on the main page.
  */
 
-// Configuration - List of blog posts to load from the /posts directory
-// Add new blog posts to this array to display them on the main page
-const blogPosts = [
-    'legal-writing-tips.md',
-    'formula1-economics.md',
-    'getting-started.md',
-    'javascript-basics.md',
-    'css-grid-tutorial.md',
-    'web-development-tools.md'
-];
+// Configuration - Path to the manifest file listing all .md posts
+const manifestFilePath = 'posts/posts-manifest.json';
 
 // DOM References
 const postsContainer = document.getElementById('posts-container');
@@ -30,6 +22,11 @@ let activeTagFilter = null;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize with default profile picture if none found
+    if (!mainProfilePicture || !mainProfilePicture.src) {
+        console.warn('Main profile picture not found. Using default avatar.');
+    }
+    
     loadPosts();
     setupEventListeners();
     
@@ -41,8 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Set up post tag click handling
-    setupPostTagClicks();
+    // Add event delegation for post tags
+    document.addEventListener('click', (e) => {
+        // Handle tag clicks throughout the document
+        if (e.target.classList.contains('post-tag')) {
+            e.stopPropagation(); // Prevent opening the post if inside a post
+            const tagName = e.target.textContent.trim();
+            filterByTag(tagName);
+        }
+    });
 });
 
 /**
@@ -71,53 +75,99 @@ function setupEventListeners() {
     
     // Initialize sidebar
     setupSidebar();
+
+    // Add event delegation for post tags
+    document.addEventListener('click', (e) => {
+        // Handle tag clicks throughout the document
+        if (e.target.classList.contains('post-tag')) {
+            e.stopPropagation(); // Prevent opening the post if inside a post
+            const tagName = e.target.textContent.trim();
+            filterByTag(tagName);
+        }
+    });
 }
 
 /**
- * Load all blog posts from the configured list
+ * Load all blog posts listed in the manifest file.
  */
 async function loadPosts() {
     try {
-        // Clear any existing content
-        postsContainer.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><p>Loading posts...</p></div>';
+        postsContainer.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><p>Loading posts manifest...</p></div>';
         
-        // Load each post from the list
-        const posts = await Promise.all(blogPosts.map(async (filename) => {
+        let postFilenames = [];
+        try {
+            const manifestResponse = await fetch(manifestFilePath);
+            if (!manifestResponse.ok) {
+                throw new Error(`Failed to load post manifest: ${manifestFilePath}. Status: ${manifestResponse.status}`);
+            }
+            postFilenames = await manifestResponse.json();
+            
+            if (!Array.isArray(postFilenames) || !postFilenames.every(item => typeof item === 'string')) {
+                 console.error('Post manifest is not a valid array of filenames. Content:', postFilenames);
+                 throw new Error('Post manifest is not a valid array of filenames.');   
+            }
+
+        } catch (manifestError) {
+            console.error(manifestError);
+            postsContainer.innerHTML = `<div class="error-message">Could not load the list of posts. <br>Ensure <code>${manifestFilePath}</code> exists in the 'posts' directory and is a valid JSON array of filenames. <br><small>${manifestError.message}</small></div>`;
+            postCountElement.textContent = 0;
+            return; 
+        }
+
+        if (postFilenames.length === 0) {
+            postsContainer.innerHTML = '<div class="no-posts">No posts listed in the manifest.</div>';
+            postCountElement.textContent = 0;
+            // Still populate sidebar tags in case there are default tags or other UI elements to set up
+            populateSidebarTags(extractAllTags([]));
+            return;
+        }
+        
+        postsContainer.innerHTML = `<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><p>Loading ${postFilenames.length} post(s)...</p></div>`;
+
+        const fetchedPosts = await Promise.all(postFilenames.map(async (filename) => {
             try {
-                const response = await fetch(`posts/${filename}`);
+                // Ensure filename does not start with a slash if path is already relative
+                const cleanFilename = filename.startsWith('/') ? filename.substring(1) : filename;
+                const response = await fetch(`posts/${cleanFilename}`); 
                 if (!response.ok) {
-                    throw new Error(`Failed to load ${filename}`);
+                    throw new Error(`Failed to load ${cleanFilename} (Status: ${response.status})`);
                 }
                 const markdown = await response.text();
                 return {
-                    filename,
+                    filename: cleanFilename,
                     markdown,
                     ...parseFrontMatter(markdown)
                 };
             } catch (error) {
-                console.error(`Error loading ${filename}:`, error);
-                return null;
+                console.error(`Error loading post ${filename}:`, error);
+                return null; 
             }
         }));
         
-        // Filter out any failed posts and sort by date (newest first)
-        allPosts = posts.filter(post => post !== null)
+        allPosts = fetchedPosts.filter(post => post !== null)
             .sort((a, b) => new Date(b.date) - new Date(a.date));
         
-        // Update post count
         postCountElement.textContent = allPosts.length;
         
-        // Display the posts
-        displayPosts(allPosts);
+        if (allPosts.length === 0 && postFilenames.length > 0) {
+             postsContainer.innerHTML = '<div class="error-message">Posts were listed in the manifest, but none could be loaded. Check the console for errors regarding individual post files.</div>';
+        } else if (allPosts.length === 0 && postFilenames.length === 0) {
+             postsContainer.innerHTML = '<div class="no-posts">No posts found.</div>'; // Should have been caught earlier
+        }
+        else {
+            displayPosts(allPosts);
+        }
         
-        // Extract all unique tags for the sidebar
         const allTags = extractAllTags(allPosts);
         populateSidebarTags(allTags);
-    } catch (error) {
-        console.error('Error loading posts:', error);
-        postsContainer.innerHTML = '<div class="error-message">Failed to load posts. Please try again later.</div>';
+
+    } catch (error) { 
+        console.error('General error in loadPosts:', error);
+        postsContainer.innerHTML = `<div class="error-message">An unexpected error occurred while loading posts. <br><small>${error.message}</small></div>`;
+        postCountElement.textContent = 0;
     }
 }
+
 
 /**
  * Extract all unique tags from the posts
@@ -197,12 +247,15 @@ function getTagColor(tagName) {
  * @param {Array} posts - Array of post objects with title, date, content
  */
 function displayPosts(posts) {
-    // Clear loading spinner
+    // Clear loading spinner or any previous content
     postsContainer.innerHTML = '';
     
     // No posts case
     if (posts.length === 0) {
-        postsContainer.innerHTML = '<div class="no-posts">No posts found.</div>';
+        // This case should ideally be handled before calling displayPosts if postFilenames was empty
+        // or if allPosts ended up empty after filtering.
+        // However, as a fallback:
+        postsContainer.innerHTML = '<div class="no-posts">No posts available to display.</div>';
         return;
     }
     
@@ -222,6 +275,8 @@ function displayPosts(posts) {
             }
         });
     });
+    // After posts are rendered, ensure tag click handlers are active (if not using event delegation)
+    // setupPostTagClicks(); // This function isn't fully defined in the provided snippet but was mentioned
 }
 
 /**
@@ -241,7 +296,7 @@ function createPostElement(post) {
     const dateFormatted = formatDate(post.date);
     
     // Get the profile picture URL from the main profile picture
-    const profilePictureUrl = mainProfilePicture.src;
+    const profilePictureUrl = mainProfilePicture ? mainProfilePicture.src : 'images/default-avatar.png'; // Fallback
     
     // Generate tags HTML if post has tags
     let tagsHTML = '';
@@ -269,7 +324,7 @@ function createPostElement(post) {
             </div>
         </div>
         <h2 class="post-title">${post.title}</h2>
-        <div class="post-content">${content}...</div>
+        <div class="post-content">${content ? content + '...' : 'Click to read more...'}</div>
         ${tagsHTML}
         <div class="post-actions">
             <div class="post-action">
@@ -305,7 +360,7 @@ function displayFullPost(post) {
     const dateFormatted = formatDate(post.date);
     
     // Get the profile picture URL from the main profile picture
-    const profilePictureUrl = mainProfilePicture.src;
+    const profilePictureUrl = mainProfilePicture ? mainProfilePicture.src : 'images/default-avatar.png'; // Fallback
     
     // Generate tags HTML if post has tags
     let tagsHTML = '';
@@ -384,40 +439,44 @@ function filterByTag(tagName) {
     
     // Update post count
     postCountElement.textContent = filteredPosts.length;
+        
+    // Update UI to show we're filtering
+    const tabsElement = document.querySelector('.tabs');
+    let filterIndicator = document.querySelector('.filter-indicator');
     
-    // If no posts match the tag
+    // Remove existing indicator if any
+    if (filterIndicator) {
+        filterIndicator.remove();
+    }
+    
+    // Add filter indicator
+    filterIndicator = document.createElement('div');
+    filterIndicator.className = 'filter-indicator';
+    filterIndicator.innerHTML = `
+        <span>Filtered by: <strong>${tagName}</strong></span>
+        <button class="clear-filter-btn" id="clear-filter-btn-id"><i class="fas fa-times"></i> Clear</button>
+    `;
+    
+    // Add click event to clear filter button
+    filterIndicator.querySelector('#clear-filter-btn-id').addEventListener('click', clearTagFilter);
+    
+    // Insert after tabs (ensure tabsElement is found)
+    if (tabsElement && tabsElement.parentNode) {
+        tabsElement.parentNode.insertBefore(filterIndicator, tabsElement.nextSibling);
+    } else {
+        // Fallback if tabsElement isn't found, prepend to postsContainer or other suitable location
+        postsContainer.parentNode.insertBefore(filterIndicator, postsContainer);
+    }
+    
+    // Switch to posts tab if not already active
+    const postsTabButton = document.querySelector('.tab[data-tab="posts"]');
+    if (postsTabButton) postsTabButton.click();
+    
+    // Display filtered posts
     if (filteredPosts.length === 0) {
         postsContainer.innerHTML = `<div class="no-posts">No posts found with tag "${tagName}".</div>`;
         return;
     }
-    
-    // Update UI to show we're filtering
-    const tabsElement = document.querySelector('.tabs');
-    const existingFilterIndicator = document.querySelector('.filter-indicator');
-    
-    // Remove existing indicator if any
-    if (existingFilterIndicator) {
-        existingFilterIndicator.remove();
-    }
-    
-    // Add filter indicator
-    const filterIndicator = document.createElement('div');
-    filterIndicator.className = 'filter-indicator';
-    filterIndicator.innerHTML = `
-        <span>Filtered by: <strong>${tagName}</strong></span>
-        <button class="clear-filter-btn"><i class="fas fa-times"></i> Clear</button>
-    `;
-    
-    // Add click event to clear filter button
-    filterIndicator.querySelector('.clear-filter-btn').addEventListener('click', clearTagFilter);
-    
-    // Insert after tabs
-    tabsElement.parentNode.insertBefore(filterIndicator, tabsElement.nextSibling);
-    
-    // Switch to posts tab if not already active
-    document.querySelector('.tab[data-tab="posts"]').click();
-    
-    // Display filtered posts
     displayPosts(filteredPosts);
 }
 
@@ -452,12 +511,15 @@ function updateSidebarTagHighlight(activeTag) {
     const tagItems = document.querySelectorAll('.tag-item');
     
     tagItems.forEach(tagItem => {
-        const tagName = tagItem.querySelector('span').textContent;
-        
-        if (activeTag && tagName.toLowerCase() === activeTag.toLowerCase()) {
-            tagItem.classList.add('active');
-        } else {
-            tagItem.classList.remove('active');
+        // Ensure the span exists before trying to read its textContent
+        const tagNameSpan = tagItem.querySelector('span:not(.tag-count)'); // Get the tag name span
+        if (tagNameSpan) {
+            const tagName = tagNameSpan.textContent;
+            if (activeTag && tagName.toLowerCase() === activeTag.toLowerCase()) {
+                tagItem.classList.add('active');
+            } else {
+                tagItem.classList.remove('active');
+            }
         }
     });
 }
@@ -471,138 +533,121 @@ function parseFrontMatter(markdown) {
     const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
     const match = markdown.match(frontMatterRegex);
     
-    if (!match) {
-        // No front matter found, extract title from first heading
-        const titleMatch = markdown.match(/^#\s+(.+)$/m);
-        const title = titleMatch ? titleMatch[1] : 'Untitled Post';
+    let frontMatterData = {
+        title: 'Untitled Post',
+        date: new Date().toISOString().split('T')[0], // Default to today
+        tags: []
+    };
+    let contentPart = markdown;
+
+    if (match && match[1] && match[2]) {
+        const frontMatterStr = match[1];
+        contentPart = match[2];
         
-        return {
-            title,
-            date: new Date().toISOString().split('T')[0], // Use today's date
-            content: markdown,
-            tags: [] // No tags if no front matter
-        };
-    }
-    
-    const frontMatter = match[1];
-    const content = match[2];
-    
-    // Parse front matter key-value pairs
-    const frontMatterData = {};
-    const lines = frontMatter.split('\n');
-    
-    lines.forEach(line => {
-        const [key, ...valueParts] = line.split(':');
-        if (key && valueParts.length) {
-            const value = valueParts.join(':').trim();
-            
-            // Handle tags specially
-            if (key.trim() === 'tags') {
-                // Parse tags as an array from comma-separated or array format
-                if (value.startsWith('[') && value.endsWith(']')) {
-                    // Array format like [tag1, tag2]
-                    frontMatterData.tags = value
-                        .substring(1, value.length - 1)
-                        .split(',')
-                        .map(tag => tag.trim())
-                        .filter(tag => tag); // Remove empty tags
+        const lines = frontMatterStr.split('\n');
+        lines.forEach(line => {
+            const [key, ...valueParts] = line.split(':');
+            const trimmedKey = key.trim();
+            if (trimmedKey && valueParts.length) {
+                const value = valueParts.join(':').trim();
+                
+                if (trimmedKey === 'tags') {
+                    if (value.startsWith('[') && value.endsWith(']')) {
+                        frontMatterData.tags = value
+                            .substring(1, value.length - 1)
+                            .split(',')
+                            .map(tag => tag.trim())
+                            .filter(tag => tag); 
+                    } else {
+                        frontMatterData.tags = value
+                            .split(',')
+                            .map(tag => tag.trim())
+                            .filter(tag => tag); 
+                    }
                 } else {
-                    // Comma-separated format like tag1, tag2
-                    frontMatterData.tags = value
-                        .split(',')
-                        .map(tag => tag.trim())
-                        .filter(tag => tag); // Remove empty tags
+                    frontMatterData[trimmedKey] = value;
                 }
-            } else {
-                frontMatterData[key.trim()] = value;
             }
-        }
-    });
-    
-    // Set defaults if not provided
-    if (!frontMatterData.title) {
-        const titleMatch = content.match(/^#\s+(.+)$/m);
-        frontMatterData.title = titleMatch ? titleMatch[1] : 'Untitled Post';
+        });
     }
     
+    // If title still default after parsing, try to get from first H1
+    if (frontMatterData.title === 'Untitled Post' || !frontMatterData.title) {
+        const titleMatchInContent = contentPart.match(/^#\s+(.+)$/m);
+        if (titleMatchInContent && titleMatchInContent[1]) {
+            frontMatterData.title = titleMatchInContent[1];
+        }
+    }
+     // Ensure date is always set
     if (!frontMatterData.date) {
         frontMatterData.date = new Date().toISOString().split('T')[0];
     }
     
-    if (!frontMatterData.tags) {
-        frontMatterData.tags = [];
-    }
-    
     return {
         ...frontMatterData,
-        content
+        content: contentPart
     };
 }
 
 /**
- * Parse markdown text to HTML
+ * Parse markdown text to HTML (simplified parser)
  * @param {string} markdown - Markdown text to convert
  * @returns {string} - Converted HTML
  */
 function parseMarkdown(markdown) {
-    // This is a simple markdown parser that handles basic markdown syntax
-    // For a production site, consider using a dedicated markdown library
-    
     let html = markdown;
     
-    // Convert headings
-    html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-    html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-    html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-    html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
-    html = html.replace(/^##### (.*$)/gm, '<h5>$1</h5>');
+    // Headings
     html = html.replace(/^###### (.*$)/gm, '<h6>$1</h6>');
+    html = html.replace(/^##### (.*$)/gm, '<h5>$1</h5>');
+    html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
+    html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
     
-    // Convert blockquotes
+    // Blockquotes
     html = html.replace(/^\> (.*$)/gm, '<blockquote>$1</blockquote>');
     
-    // Convert code blocks
+    // Code Blocks (simple)
     html = html.replace(/```([\s\S]*?)```/g, function(match, code) {
         return `<pre><code>${escapeHtml(code.trim())}</code></pre>`;
     });
-    
-    // Convert inline code
+    // Inline Code
     html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
     
-    // Convert strong/bold
+    // Bold and Italic
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/\_\_(.*?)\_\_/g, '<strong>$1</strong>');
-    
-    // Convert emphasis/italic
     html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
     html = html.replace(/\_(.*?)\_/g, '<em>$1</em>');
     
-    // Convert horizontal rules
-    html = html.replace(/^\-\-\-$/gm, '<hr>');
-    
-    // Convert unordered lists
-    html = html.replace(/^\* (.*$)/gm, '<ul><li>$1</li></ul>');
-    html = html.replace(/^\- (.*$)/gm, '<ul><li>$1</li></ul>');
-    html = html.replace(/<\/ul>\s*<ul>/g, '');
-    
-    // Convert ordered lists
-    html = html.replace(/^\d+\. (.*$)/gm, '<ol><li>$1</li></ol>');
-    html = html.replace(/<\/ol>\s*<ol>/g, '');
-    
-    // Convert links
+    // Links and Images
+    html = html.replace(/!\[([^\]]+)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
     
-    // Convert images
-    html = html.replace(/!\[([^\]]+)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+    // Horizontal Rule
+    html = html.replace(/^\s*(\-\-\-|\*\*\*|\_\_\_)\s*$/gm, '<hr>');
+
+    // Lists (basic handling, might need improvement for nested lists)
+    // Unordered
+    html = html.replace(/^\s*[\*\-\+] (.*)/gm, '<ul>\n<li>$1</li>\n</ul>');
+    html = html.replace(/<\/ul>\s*<ul>/g, ''); // Merge adjacent lists
+    // Ordered
+    html = html.replace(/^\s*\d+\. (.*)/gm, '<ol>\n<li>$1</li>\n</ol>');
+    html = html.replace(/<\/ol>\s*<ol>/g, ''); // Merge adjacent lists
+
+    // Paragraphs (wrap lines that don't start with a tag or are not part of lists)
+    // This is a very basic paragraph handling. A robust solution is more complex.
+    html = html.split(/\n\s*\n/).map(paragraph => {
+        if (paragraph.trim().length === 0) return '';
+        if (/^<\/?(h[1-6]|ul|ol|li|blockquote|pre|hr)/.test(paragraph.trim())) {
+            return paragraph; // Already a block element
+        }
+        return `<p>${paragraph.trim()}</p>`;
+    }).join('\n');
     
-    // Convert paragraphs
-    html = html.replace(/^(?!<[a-z])/gm, '<p>');
-    html = html.replace(/^(?!<\/[a-z])/gm, '</p>');
-    html = html.replace(/<\/p>\s*<p>/g, '</p><p>');
-    
-    // Clean up empty paragraphs
-    html = html.replace(/<p><\/p>/g, '');
-    
+    html = html.replace(/<p>\s*<\/p>/g, ''); // Remove empty paragraphs
+
     return html;
 }
 
@@ -619,36 +664,34 @@ function escapeHtml(text) {
         '"': '&quot;',
         "'": '&#039;'
     };
-    
     return text.replace(/[&<>"']/g, m => map[m]);
 }
 
 /**
- * Extract the first paragraph from markdown content
- * @param {string} markdown - Markdown content
- * @returns {string} - First paragraph text
+ * Extract the first paragraph from markdown content for preview
+ * @param {string} markdown - Markdown content (after front matter removal)
+ * @returns {string} - First paragraph text, or a fallback
  */
-function getFirstParagraph(markdown) {
-    // Remove front matter if present
-    const contentWithoutFrontMatter = markdown.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '');
+function getFirstParagraph(markdownContent) {
+    // Remove headings from the content part
+    const contentWithoutHeadings = markdownContent.replace(/^#+ .*$/gm, '').trim();
     
-    // Remove headings
-    const contentWithoutHeadings = contentWithoutFrontMatter.replace(/^#+ .*$/gm, '');
-    
-    // Find the first non-empty paragraph
+    if (!contentWithoutHeadings) return 'No preview available.';
+
+    // Split by double line breaks to find paragraphs
     const paragraphs = contentWithoutHeadings.split(/\n\s*\n/);
     
     for (const para of paragraphs) {
         const trimmed = para.trim();
+        // Ensure it's not a list item, blockquote, or code block start
         if (trimmed && !trimmed.startsWith('```') && !trimmed.startsWith('>') && 
-            !trimmed.startsWith('*') && !trimmed.startsWith('-') && 
-            !trimmed.startsWith('1.')) {
-            // Limit to 120 characters
-            return trimmed.substring(0, 120);
+            !trimmed.startsWith('* ') && !trimmed.startsWith('- ') && !trimmed.startsWith('+ ') &&
+            !/^\d+\.\s/.test(trimmed)) {
+            return trimmed.substring(0, 150); // Limit preview length
         }
     }
-    
-    return 'No preview available';
+    // Fallback if no suitable paragraph is found
+    return markdownContent.substring(0, 150);
 }
 
 /**
@@ -657,14 +700,19 @@ function getFirstParagraph(markdown) {
  * @returns {string} - Plain text without markdown formatting
  */
 function removeMarkdownFormatting(text) {
+    if (!text) return '';
     return text
-        .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
-        .replace(/\_\_(.*?)\_\_/g, '$1') // Bold with underscores
-        .replace(/\*(.*?)\*/g, '$1')     // Italic
-        .replace(/\_(.*?)\_/g, '$1')     // Italic with underscores
-        .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
-        .replace(/`(.*?)`/g, '$1')       // Inline code
-        .replace(/^\> (.*$)/gm, '$1');   // Blockquotes
+        .replace(/\*\*(.*?)\*\*/g, '$1') 
+        .replace(/\_\_(.*?)\_\_/g, '$1') 
+        .replace(/\*(.*?)\*/g, '$1')     
+        .replace(/\_(.*?)\_/g, '$1')     
+        .replace(/!\[(.*?)\]\(.*?\)/g, '') // Remove images for preview
+        .replace(/\[(.*?)\]\(.*?\)/g, '$1') 
+        .replace(/`(.*?)`/g, '$1')       
+        .replace(/^#+\s*/gm, '')          // Remove heading markers
+        .replace(/^\>\s*/gm, '')          // Remove blockquote markers
+        .replace(/(\r\n|\n|\r)/gm, " ")   // Replace newlines with spaces for continuous text
+        .replace(/\s+/g, ' ').trim();     // Normalize whitespace
 }
 
 /**
@@ -673,13 +721,19 @@ function removeMarkdownFormatting(text) {
  * @returns {string} - Formatted date string
  */
 function formatDate(dateString) {
+    if (!dateString) return 'Unknown date';
     const date = new Date(dateString);
-    
-    // Check if date is valid
     if (isNaN(date.getTime())) {
-        return 'Unknown date';
+        // Try to parse if it's just a year or YYYY-MM
+        if (/^\d{4}$/.test(dateString)) { // Just year
+            return dateString;
+        }
+        if (/^\d{4}-\d{2}$/.test(dateString)) { // Year and month
+             const [year, month] = dateString.split('-');
+             return new Date(year, month -1).toLocaleDateString('en-US', {year: 'numeric', month: 'long'});
+        }
+        return 'Invalid date';
     }
-    
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
 }
@@ -690,6 +744,7 @@ function formatDate(dateString) {
  * @returns {number} - Reading time in minutes
  */
 function getReadingTime(content) {
+    if (!content) return 1;
     const wordsPerMinute = 200;
     const wordCount = content.split(/\s+/).length;
     const readingTime = Math.ceil(wordCount / wordsPerMinute);
@@ -710,34 +765,35 @@ function getRandomNumber(min, max) {
  * Set up theme toggle functionality for light/dark mode
  */
 function setupThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
+
     // Check for saved theme preference or use device preference
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        document.body.classList.add('dark-theme');
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i><span>Light Mode</span>';
+        } else {
+            document.body.classList.remove('dark-theme');
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i><span>Dark Mode</span>';
+        }
+    };
+
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else {
+        applyTheme(prefersDark ? 'dark' : 'light');
     }
     
-    // Add theme toggle to the sidebar
-    const themeToggle = document.getElementById('theme-toggle');
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            
-            // Update toggle icon
-            themeToggle.innerHTML = isDark ? 
-                '<i class="fas fa-sun"></i><span>Light Mode</span>' : 
-                '<i class="fas fa-moon"></i><span>Dark Mode</span>';
-        });
-        
-        // Set initial toggle text
-        const isDark = document.body.classList.contains('dark-theme');
-        themeToggle.innerHTML = isDark ? 
-            '<i class="fas fa-sun"></i><span>Light Mode</span>' : 
-            '<i class="fas fa-moon"></i><span>Dark Mode</span>';
-    }
+    themeToggle.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark-theme');
+        const newTheme = isDark ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    });
 }
 
 /**
@@ -749,21 +805,19 @@ function setupTabs() {
     
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // Remove active class from all tabs
             tabButtons.forEach(btn => btn.classList.remove('active'));
             tabContents.forEach(content => content.classList.remove('active'));
             
-            // Add active class to clicked tab
             button.classList.add('active');
-            
-            // Show corresponding content
             const tabId = button.getAttribute('data-tab');
-            document.getElementById(`${tabId}-tab`).classList.add('active');
+            const activeContent = document.getElementById(`${tabId}-tab`);
+            if (activeContent) activeContent.classList.add('active');
             
-            // Special handling for posts tab - respect active filter
             if (tabId === 'posts' && activeTagFilter) {
-                // Re-apply filter if we have an active filter
                 filterByTag(activeTagFilter);
+            } else if (tabId === 'posts' && !activeTagFilter) {
+                // If switching to posts tab and no filter is active, ensure all posts are shown
+                clearTagFilter(); // This will display all posts if not already
             }
         });
     });
@@ -778,33 +832,28 @@ function setupSidebar() {
     sidebarItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            // Remove active class from all sidebar items
             sidebarItems.forEach(sidebarItem => sidebarItem.classList.remove('active'));
-            
-            // Add active class to clicked item
             item.classList.add('active');
             
-            // Get the section to show
             const section = item.getAttribute('data-section');
-            
-            // Handle section navigation
+            const postsTabButton = document.querySelector('.tab[data-tab="posts"]');
+            const aboutTabButton = document.querySelector('.tab[data-tab="about"]');
+            const socialsTabButton = document.querySelector('.tab[data-tab="socials"]');
+
             switch(section) {
-                case 'profile':
-                    // Already on profile, do nothing
+                case 'profile': // Assuming profile means the main view with posts tab active
+                    if(postsTabButton) postsTabButton.click();
+                    clearTagFilter(); // Clear filters when going to profile/home
                     break;
                 case 'home':
-                    // Show posts tab and clear any filters
-                    clearTagFilter();
-                    document.querySelector('.tab[data-tab="posts"]').click();
+                     if(postsTabButton) postsTabButton.click();
+                     clearTagFilter(); 
                     break;
                 case 'about':
-                    // Show about tab
-                    document.querySelector('.tab[data-tab="about"]').click();
+                    if(aboutTabButton) aboutTabButton.click();
                     break;
                 case 'socials':
-                    // Show socials tab
-                    document.querySelector('.tab[data-tab="socials"]').click();
+                    if(socialsTabButton) socialsTabButton.click();
                     break;
             }
         });
@@ -819,66 +868,38 @@ function populateSidebarTags(tags = []) {
     const tagsContainer = document.getElementById('sidebar-tags');
     if (!tagsContainer) return;
     
-    // Clear any existing tags
-    tagsContainer.innerHTML = '';
+    tagsContainer.innerHTML = ''; // Clear existing tags
     
-    // If no tags provided, use these defaults
-    if (tags.length === 0) {
-        tags = [
-            { name: 'Constitutional Law', count: 3, color: '#1da1f2' },
-            { name: 'Legal Writing', count: 2, color: '#8a2be2' },
-            { name: 'Civil Rights', count: 1, color: '#ff6347' },
-            { name: 'Law School', count: 4, color: '#2ecc71' },
-            { name: 'Case Studies', count: 2, color: '#f39c12' }
-        ];
-    }
+    // Example default tags if `tags` array is empty after extraction,
+    // or if you want some tags to always appear.
+    // For this dynamic version, we'll rely purely on extracted tags.
+    // if (tags.length === 0) {
+    //     tags = [ /* some default tags if needed */ ];
+    // }
     
-    // Create tag elements
     tags.forEach(tag => {
         const tagItem = document.createElement('div');
         tagItem.className = 'tag-item';
+        // Ensure tag.name and tag.count are defined
+        const tagName = tag.name || 'Unknown Tag';
+        const tagCount = tag.count || 0;
+        const tagColor = tag.color || getTagColor(tagName); // Get color if not provided
+
         tagItem.innerHTML = `
-            <div class="tag-color" style="background-color: ${tag.color};"></div>
-            <span>${tag.name}</span>
-            <span class="tag-count">${tag.count}</span>
+            <div class="tag-color" style="background-color: ${tagColor};"></div>
+            <span>${tagName}</span>
+            <span class="tag-count">${tagCount}</span>
         `; 
 
-        // Add click functionality to filter by tag
         tagItem.addEventListener('click', () => {
-            filterByTag(tag.name);
-            updateSidebarTagHighlight(tag.name);
+            filterByTag(tagName);
+            // updateSidebarTagHighlight is called within filterByTag
         });
-
-        // Add to tags container
         tagsContainer.appendChild(tagItem);
     });
 }
 
-/**
- * Handle special case when clicking posts tab - ensure active filter is respected
- */
-function setupPostTagClicks() {
-    // Add click handlers to tags in posts (needs to be called after posts are rendered)
-    document.querySelectorAll('.post-tag').forEach(tag => {
-        tag.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent opening the post
-            const tagName = e.target.textContent.trim();
-            filterByTag(tagName);
-        });
-    });
-
-    // Also add click handlers to tags in modals when a post is opened
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('post-tag') && modal.style.display === 'block') {
-            e.stopPropagation();
-            const tagName = e.target.textContent.trim();
-            
-            // Close the modal
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            
-            // Apply the filter
-            filterByTag(tagName);
-        }
-    });
-}
+// The setupPostTagClicks function mentioned in the original code was not fully defined.
+// Event delegation is often a better approach for dynamically added content.
+// For simplicity, tag click handling within posts is done when creating the post element,
+// and for modal tags, it's done when the modal is displayed.
