@@ -1,8 +1,7 @@
-# oh super 
-
 ---
 title: Getting Started with TweetBlog
 date: 2025-05-01
+tags: [Tech, Books]
 ---
 
 # Getting Started with TweetBlog

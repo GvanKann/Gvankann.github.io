@@ -8,54 +8,182 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Header section (similar to Twitter header) -->
-        <header class="profile-header">
-            <div class="banner">
-                <img src="/images/cover_image.jpg" alt="Banner Image">
-            </div>
-            <div class="profile-info">
-                <div class="profile-picture">
-                    <img src="/images/profile_picture.jpg" alt="Profile Picture">
-                </div>
-                <div class="profile-details">
-                    <h1 class="name">John Doe</h1>
-                    <p class="username">@johndoe</p>
-                    <p class="bio">Developer, writer, and coffee enthusiast. Sharing thoughts on tech, life, and everything in between.</p>
-                    <div class="stats">
-                        <div class="stat">
-                            <span class="count" id="post-count">0</span>
-                            <span class="label">Posts</span>
-                        </div>
-                        <div class="stat">
-                            <span class="count">42</span>
-                            <span class="label">Following</span>
-                        </div>
-                        <div class="stat">
-                            <span class="count">128</span>
-                            <span class="label">Followers</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main content with posts/tweets -->
-        <main class="content">
-            <div class="tabs">
-                <button class="tab active">Posts</button>
-                <button class="tab">About</button>
-                <button class="tab">Archives</button>
+    <div class="page-layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fas fa-pen-fancy"></i>
             </div>
             
-            <div class="posts-container" id="posts-container">
-                <!-- Posts will be dynamically inserted here by JavaScript -->
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading posts...</p>
-                </div>
+            <div class="sidebar-nav">
+                <a href="#" class="sidebar-item active" data-section="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="sidebar-item" data-section="home">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="sidebar-item" data-section="about">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+                <a href="#" class="sidebar-item" data-section="socials">
+                    <i class="fas fa-share-nodes"></i>
+                    <span>Socials</span>
+                </a>
             </div>
-        </main>
+            
+            <div class="sidebar-section">Tags</div>
+            <div class="tags-container" id="sidebar-tags">
+                <!-- Tags will be added dynamically here -->
+            </div>
+            
+            <button id="theme-toggle">
+                <i class="fas fa-moon"></i>
+                <span>Dark Mode</span>
+            </button>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <!-- Header section (similar to Twitter header) -->
+                <header class="profile-header">
+                    <div class="banner">
+                        <img src="/images/cover_image.jpg" alt="Banner Image">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-picture">
+                            <img src="/images/profile_picture.jpg" alt="Profile Picture">
+                        </div>
+                        <div class="profile-details">
+                            <h1 class="name">John Doe</h1>
+                            <p class="username">@johndoe</p>
+                            <p class="bio">First year law student. Sharing thoughts on law, politics, and legal academia.</p>
+                            <div class="stats">
+                                <div class="stat">
+                                    <span class="count" id="post-count">0</span>
+                                    <span class="label">Posts</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="count">42</span>
+                                    <span class="label">Following</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="count">128</span>
+                                    <span class="label">Followers</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Main content with posts/tweets -->
+                <main class="content">
+                    <div class="tabs">
+                        <button class="tab active" data-tab="posts">Posts</button>
+                        <button class="tab" data-tab="about">About</button>
+                        <button class="tab" data-tab="socials">Socials</button>
+                    </div>
+                    
+                    <!-- Posts Tab Content -->
+                    <div class="tab-content active" id="posts-tab">
+                        <div class="posts-container" id="posts-container">
+                            <!-- Posts will be dynamically inserted here by JavaScript -->
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading posts...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- About Tab Content -->
+                    <div class="tab-content" id="about-tab">
+                        <div class="about-content">
+                            <h2>About Me</h2>
+                            <p>I'm a first-year law student at Capital University Law School with a passion for constitutional law and legal writing.</p>
+                            
+                            <h3>Education</h3>
+                            <div class="about-item">
+                                <div class="about-item-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="about-item-content">
+                                    <h4>J.D. Candidate</h4>
+                                    <p>Capital University Law School</p>
+                                    <p class="about-date">2024 - Present</p>
+                                </div>
+                            </div>
+                            <div class="about-item">
+                                <div class="about-item-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div class="about-item-content">
+                                    <h4>B.A. in Political Science</h4>
+                                    <p>Ohio State University</p>
+                                    <p class="about-date">2020 - 2024</p>
+                                </div>
+                            </div>
+                            
+                            <h3>Interests</h3>
+                            <div class="interests">
+                                <span class="interest-tag">Constitutional Law</span>
+                                <span class="interest-tag">Legal Writing</span>
+                                <span class="interest-tag">Civil Rights</span>
+                                <span class="interest-tag">Environmental Law</span>
+                                <span class="interest-tag">Formula 1</span>
+                            </div>
+                            
+                            <h3>Current Courses</h3>
+                            <ul class="courses-list">
+                                <li>Civil Procedure</li>
+                                <li>Contracts</li>
+                                <li>Criminal Law</li>
+                                <li>Legal Research & Writing</li>
+                                <li>Torts</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Socials Tab Content -->
+                    <div class="tab-content" id="socials-tab">
+                        <div class="socials-content">
+                            <h2>Connect With Me</h2>
+                            <p>Follow me on these platforms to stay updated with my law school journey!</p>
+                            
+                            <div class="social-links">
+                                <a href="#" class="social-link">
+                                    <i class="fab fa-linkedin"></i>
+                                    <span>LinkedIn</span>
+                                    <p>Connect professionally</p>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="fab fa-twitter"></i>
+                                    <span>Twitter</span>
+                                    <p>Daily law school updates</p>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="fab fa-instagram"></i>
+                                    <span>Instagram</span>
+                                    <p>Behind the scenes of law school</p>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="fab fa-github"></i>
+                                    <span>GitHub</span>
+                                    <p>Legal tech projects</p>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="fas fa-podcast"></i>
+                                    <span>My Podcast</span>
+                                    <p>"Law School Diaries"</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
     </div>
 
     <!-- Modal for displaying full post content -->

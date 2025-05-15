@@ -23,26 +23,10 @@ const modalContent = document.getElementById('full-post-content');
 const closeButton = document.querySelector('.close-button');
 const mainProfilePicture = document.querySelector('.profile-picture img');
 
-// Store all loaded posts for filtering
-let allPosts = [];
-// Current active tag filter (null means show all)
-let activeTagFilter = null;
-
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     loadPosts();
     setupEventListeners();
-    
-    // Add escape key handler for modal
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.style.display === 'block') {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
-    
-    // Set up post tag click handling
-    setupPostTagClicks();
 });
 
 /**
@@ -101,94 +85,24 @@ async function loadPosts() {
         }));
         
         // Filter out any failed posts and sort by date (newest first)
-        allPosts = posts.filter(post => post !== null)
+        const validPosts = posts.filter(post => post !== null)
             .sort((a, b) => new Date(b.date) - new Date(a.date));
         
+        // Store all loaded posts for filtering
+        allLoadedPosts = validPosts;
+        
         // Update post count
-        postCountElement.textContent = allPosts.length;
+        postCountElement.textContent = validPosts.length;
         
         // Display the posts
-        displayPosts(allPosts);
+        displayPosts(validPosts);
         
-        // Extract all unique tags for the sidebar
-        const allTags = extractAllTags(allPosts);
+        // Extract all tags for the sidebar
+        const allTags = extractAllTags(validPosts);
         populateSidebarTags(allTags);
     } catch (error) {
         console.error('Error loading posts:', error);
         postsContainer.innerHTML = '<div class="error-message">Failed to load posts. Please try again later.</div>';
-    }
-}
-
-/**
- * Extract all unique tags from the posts
- * @param {Array} posts - Array of post objects
- * @returns {Array} - Array of unique tag objects with name and count
- */
-function extractAllTags(posts) {
-    const tagCounts = {};
-    
-    posts.forEach(post => {
-        if (post.tags && Array.isArray(post.tags)) {
-            post.tags.forEach(tag => {
-                const normalizedTag = tag.trim();
-                if (normalizedTag) {
-                    tagCounts[normalizedTag] = (tagCounts[normalizedTag] || 0) + 1;
-                }
-            });
-        }
-    });
-    
-    // Convert to array of objects with name and count
-    return Object.keys(tagCounts).map(tagName => ({
-        name: tagName,
-        count: tagCounts[tagName],
-        // Assign a consistent color based on tag name
-        color: getTagColor(tagName)
-    })).sort((a, b) => b.count - a.count); // Sort by popularity
-}
-
-/**
- * Get a consistent color for a tag based on its name
- * @param {string} tagName - Name of the tag
- * @returns {string} - CSS color string
- */
-function getTagColor(tagName) {
-    // Predefined tag colors (same as in CSS)
-    const tagColors = {
-        'law': '#3498db',
-        'politics': '#e74c3c',
-        'economics': '#2ecc71',
-        'formula1': '#f39c12',
-        'tech': '#9b59b6',
-        'philosophy': '#1abc9c',
-        'books': '#d35400',
-        'movies': '#8e44ad',
-        'legal writing': '#8a2be2',
-        'constitutional law': '#1da1f2',
-        'civil rights': '#ff6347',
-        'law school': '#2ecc71',
-        'case studies': '#f39c12'
-    };
-    
-    // Normalize tag name to lowercase for matching
-    const normalizedTag = tagName.toLowerCase();
-    
-    // Return predefined color or generate one based on tag name
-    if (tagColors[normalizedTag]) {
-        return tagColors[normalizedTag];
-    } else {
-        // Generate a color hash based on tag name
-        let hash = 0;
-        for (let i = 0; i < normalizedTag.length; i++) {
-            hash = normalizedTag.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        
-        let color = '#';
-        for (let i = 0; i < 3; i++) {
-            const value = (hash >> (i * 8)) & 0xFF;
-            color += ('00' + value.toString(16)).substr(-2);
-        }
-        return color;
     }
 }
 
@@ -212,14 +126,8 @@ function displayPosts(posts) {
         postsContainer.appendChild(postEl);
         
         // Add click event to open the full post
-        postEl.addEventListener('click', (e) => {
-            // If clicking on a tag, filter by tag instead
-            if (e.target.classList.contains('post-tag')) {
-                e.stopPropagation(); // Prevent opening the post
-                filterByTag(e.target.textContent.trim());
-            } else {
-                displayFullPost(post);
-            }
+        postEl.addEventListener('click', () => {
+            displayFullPost(post);
         });
     });
 }
@@ -232,7 +140,6 @@ function displayPosts(posts) {
 function createPostElement(post) {
     const postEl = document.createElement('div');
     postEl.className = 'post';
-    postEl.dataset.filename = post.filename;
     
     // Get the first paragraph for the preview
     const content = removeMarkdownFormatting(getFirstParagraph(post.content));
@@ -248,10 +155,9 @@ function createPostElement(post) {
     if (post.tags && post.tags.length > 0) {
         tagsHTML = `
             <div class="post-tags">
-                ${post.tags.map(tag => {
-                    const tagColor = getTagColor(tag);
-                    return `<span class="post-tag" style="background-color: ${tagColor}">${tag}</span>`;
-                }).join('')}
+                ${post.tags.map(tag => `
+                    <span class="post-tag tag-${tag.toLowerCase()}">${tag}</span>
+                `).join('')}
             </div>
         `;
     }
@@ -312,10 +218,9 @@ function displayFullPost(post) {
     if (post.tags && post.tags.length > 0) {
         tagsHTML = `
             <div class="post-tags">
-                ${post.tags.map(tag => {
-                    const tagColor = getTagColor(tag);
-                    return `<span class="post-tag" style="background-color: ${tagColor}">${tag}</span>`;
-                }).join('')}
+                ${post.tags.map(tag => `
+                    <span class="post-tag tag-${tag.toLowerCase()}">${tag}</span>
+                `).join('')}
             </div>
         `;
     }
@@ -343,123 +248,9 @@ function displayFullPost(post) {
         </div>
     `;
     
-    // Add click event to tags in the modal
-    const tagElements = modalContent.querySelectorAll('.post-tag');
-    tagElements.forEach(tagElement => {
-        tagElement.addEventListener('click', (e) => {
-            e.preventDefault();
-            const tagName = e.target.textContent.trim();
-            
-            // Close the modal
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            
-            // Filter by the clicked tag
-            filterByTag(tagName);
-        });
-    });
-    
     // Show the modal
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden'; // Prevent body scrolling
-}
-
-/**
- * Filter posts by tag name
- * @param {string} tagName - Name of the tag to filter by
- */
-function filterByTag(tagName) {
-    // Set active tag filter
-    activeTagFilter = tagName;
-    
-    // Update sidebar tag highlight
-    updateSidebarTagHighlight(tagName);
-    
-    // Filter posts by tag
-    const filteredPosts = allPosts.filter(post => 
-        post.tags && post.tags.some(tag => 
-            tag.toLowerCase() === tagName.toLowerCase()
-        )
-    );
-    
-    // Update post count
-    postCountElement.textContent = filteredPosts.length;
-    
-    // If no posts match the tag
-    if (filteredPosts.length === 0) {
-        postsContainer.innerHTML = `<div class="no-posts">No posts found with tag "${tagName}".</div>`;
-        return;
-    }
-    
-    // Update UI to show we're filtering
-    const tabsElement = document.querySelector('.tabs');
-    const existingFilterIndicator = document.querySelector('.filter-indicator');
-    
-    // Remove existing indicator if any
-    if (existingFilterIndicator) {
-        existingFilterIndicator.remove();
-    }
-    
-    // Add filter indicator
-    const filterIndicator = document.createElement('div');
-    filterIndicator.className = 'filter-indicator';
-    filterIndicator.innerHTML = `
-        <span>Filtered by: <strong>${tagName}</strong></span>
-        <button class="clear-filter-btn"><i class="fas fa-times"></i> Clear</button>
-    `;
-    
-    // Add click event to clear filter button
-    filterIndicator.querySelector('.clear-filter-btn').addEventListener('click', clearTagFilter);
-    
-    // Insert after tabs
-    tabsElement.parentNode.insertBefore(filterIndicator, tabsElement.nextSibling);
-    
-    // Switch to posts tab if not already active
-    document.querySelector('.tab[data-tab="posts"]').click();
-    
-    // Display filtered posts
-    displayPosts(filteredPosts);
-}
-
-/**
- * Clear tag filter and show all posts
- */
-function clearTagFilter() {
-    // Reset active tag filter
-    activeTagFilter = null;
-    
-    // Remove filter indicator
-    const filterIndicator = document.querySelector('.filter-indicator');
-    if (filterIndicator) {
-        filterIndicator.remove();
-    }
-    
-    // Display all posts
-    displayPosts(allPosts);
-    
-    // Update post count to show all posts
-    postCountElement.textContent = allPosts.length;
-    
-    // Remove highlight from sidebar tags
-    updateSidebarTagHighlight(null);
-}
-
-/**
- * Update sidebar tag highlighting based on active filter
- * @param {string|null} activeTag - Currently active tag or null if no filter
- */
-function updateSidebarTagHighlight(activeTag) {
-    const tagItems = document.querySelectorAll('.tag-item');
-    
-    tagItems.forEach(tagItem => {
-        const tagName = tagItem.querySelector('span').textContent;
-        
-        if (activeTag && tagName.toLowerCase() === activeTag.toLowerCase()) {
-            tagItem.classList.add('active');
-        } else {
-            tagItem.classList.remove('active');
-        }
-    });
 }
 
 /**
@@ -504,14 +295,12 @@ function parseFrontMatter(markdown) {
                     frontMatterData.tags = value
                         .substring(1, value.length - 1)
                         .split(',')
-                        .map(tag => tag.trim())
-                        .filter(tag => tag); // Remove empty tags
+                        .map(tag => tag.trim());
                 } else {
                     // Comma-separated format like tag1, tag2
                     frontMatterData.tags = value
                         .split(',')
-                        .map(tag => tag.trim())
-                        .filter(tag => tag); // Remove empty tags
+                        .map(tag => tag.trim());
                 }
             } else {
                 frontMatterData[key.trim()] = value;
@@ -759,12 +548,6 @@ function setupTabs() {
             // Show corresponding content
             const tabId = button.getAttribute('data-tab');
             document.getElementById(`${tabId}-tab`).classList.add('active');
-            
-            // Special handling for posts tab - respect active filter
-            if (tabId === 'posts' && activeTagFilter) {
-                // Re-apply filter if we have an active filter
-                filterByTag(activeTagFilter);
-            }
         });
     });
 }
@@ -794,8 +577,7 @@ function setupSidebar() {
                     // Already on profile, do nothing
                     break;
                 case 'home':
-                    // Show posts tab and clear any filters
-                    clearTagFilter();
+                    // Show posts tab
                     document.querySelector('.tab[data-tab="posts"]').click();
                     break;
                 case 'about':
@@ -809,6 +591,9 @@ function setupSidebar() {
             }
         });
     });
+    
+    // Populate sidebar tags
+    populateSidebarTags();
 }
 
 /**
@@ -818,12 +603,13 @@ function setupSidebar() {
 function populateSidebarTags(tags = []) {
     const tagsContainer = document.getElementById('sidebar-tags');
     if (!tagsContainer) return;
-    
+
     // Clear any existing tags
     tagsContainer.innerHTML = '';
-    
-    // If no tags provided, use these defaults
+
+    // If no tags provided, use these defaults (or could be an empty array if posts don't have tags yet)
     if (tags.length === 0) {
+        // This default block can be kept or removed if tags are always expected from 'extractAllTags'
         tags = [
             { name: 'Constitutional Law', count: 3, color: '#1da1f2' },
             { name: 'Legal Writing', count: 2, color: '#8a2be2' },
@@ -832,7 +618,7 @@ function populateSidebarTags(tags = []) {
             { name: 'Case Studies', count: 2, color: '#f39c12' }
         ];
     }
-    
+
     // Create tag elements
     tags.forEach(tag => {
         const tagItem = document.createElement('div');
@@ -841,44 +627,143 @@ function populateSidebarTags(tags = []) {
             <div class="tag-color" style="background-color: ${tag.color};"></div>
             <span>${tag.name}</span>
             <span class="tag-count">${tag.count}</span>
-        `; 
+        `; // Closed the template literal with a backtick
 
         // Add click functionality to filter by tag
         tagItem.addEventListener('click', () => {
-            filterByTag(tag.name);
-            updateSidebarTagHighlight(tag.name);
+            filterByTag(tag.name); // This function is defined elsewhere in your newapp.js
+            updateSidebarTagHighlight(tag.name); // This function is also defined elsewhere
         });
 
-        // Add to tags container
-        tagsContainer.appendChild(tagItem);
-    });
+        tagsContainer.appendChild(tagItem); // Appended the new tagItem to the tagsContainer
+    }); // Closed the forEach loop
 }
 
 /**
- * Handle special case when clicking posts tab - ensure active filter is respected
+ * Update the sidebar tag highlight to show active tag filter
+ * @param {string} tagName - Name of the active tag filter
  */
-function setupPostTagClicks() {
-    // Add click handlers to tags in posts (needs to be called after posts are rendered)
-    document.querySelectorAll('.post-tag').forEach(tag => {
-        tag.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent opening the post
-            const tagName = e.target.textContent.trim();
-            filterByTag(tagName);
-        });
+function updateSidebarTagHighlight(tagName) {
+    // Remove active class from all tag items
+    const allTagItems = document.querySelectorAll('.tag-item');
+    allTagItems.forEach(item => {
+        item.classList.remove('active');
     });
+    
+    // Add active class to the selected tag item
+    if (tagName) {
+        allTagItems.forEach(item => {
+            const tagText = item.querySelector('span').textContent;
+            if (tagText.toLowerCase() === tagName.toLowerCase()) {
+                item.classList.add('active');
+            }
+        });
+    }
+}
 
-    // Also add click handlers to tags in modals when a post is opened
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('post-tag') && modal.style.display === 'block') {
-            e.stopPropagation();
-            const tagName = e.target.textContent.trim();
+/**
+ * Filter posts by tag name
+ * @param {string} tagName - Name of the tag to filter by
+ */
+function filterByTag(tagName) {
+    console.log(`Filtering posts by tag: ${tagName}`);
+    
+    // Update sidebar tag highlight
+    updateSidebarTagHighlight(tagName);
+    
+    // Show loading indicator
+    postsContainer.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><p>Filtering posts...</p></div>';
+    
+    // Simulate loading delay
+    setTimeout(() => {
+        // Get all posts that match the tag
+        const filteredPosts = allLoadedPosts.filter(post => 
+            post.tags && post.tags.some(tag => tag.toLowerCase() === tagName.toLowerCase())
+        );
+        
+        // Update post count
+        postCountElement.textContent = filteredPosts.length;
+        
+        // If no posts match the tag
+        if (filteredPosts.length === 0) {
+            postsContainer.innerHTML = `<div class="no-posts">No posts found with tag "${tagName}".</div>`;
+            return;
+        }
+        
+        // Display the filtered posts
+        displayPosts(filteredPosts);
+        
+        // Show the active filter
+        const filterIndicator = document.createElement('div');
+        filterIndicator.className = 'filter-indicator';
+        filterIndicator.innerHTML = `
+            <span>Filtered by: <strong>${tagName}</strong></span>
+            <button id="clear-filter">Clear filter</button>
+        `;
+        
+        // Add to the beginning of the posts container
+        postsContainer.insertBefore(filterIndicator, postsContainer.firstChild);
+        
+        // Add clear filter functionality
+        document.getElementById('clear-filter').addEventListener('click', () => {
+            // Clear tag highlight in sidebar
+            updateSidebarTagHighlight(null);
             
-            // Close the modal
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            
-            // Apply the filter
-            filterByTag(tagName);
+            // Show all posts
+            displayPosts(allLoadedPosts);
+            postCountElement.textContent = allLoadedPosts.length;
+        });
+    }, 500); // Simulate loading delay
+}
+
+// Store all loaded posts for filtering
+let allLoadedPosts = [];
+
+/**
+ * Extract all unique tags from posts and count occurrences
+ * @param {Array} posts - Array of post objects
+ * @returns {Array} Array of tag objects with name, count, and color
+ */
+function extractAllTags(posts) {
+    // Get all tags from all posts
+    const tagCounts = {};
+    
+    posts.forEach(post => {
+        if (post.tags && post.tags.length > 0) {
+            post.tags.forEach(tag => {
+                // Convert to lowercase for consistency
+                const normalizedTag = tag.toLowerCase();
+                tagCounts[normalizedTag] = (tagCounts[normalizedTag] || 0) + 1;
+            });
         }
     });
+    
+    // Convert to array of objects
+    const tagColors = {
+        law: '#3498db',
+        politics: '#e74c3c',
+        economics: '#2ecc71',
+        formula1: '#f39c12',
+        tech: '#9b59b6',
+        philosophy: '#1abc9c',
+        books: '#d35400',
+        movies: '#8e44ad'
+    };
+    
+    return Object.entries(tagCounts).map(([tag, count]) => {
+        // Find the right color based on tag name
+        let color = '#8a2be2'; // Default color
+        for (const [key, value] of Object.entries(tagColors)) {
+            if (tag.includes(key.toLowerCase())) {
+                color = value;
+                break;
+            }
+        }
+        
+        return {
+            name: tag.charAt(0).toUpperCase() + tag.slice(1), // Capitalize first letter
+            count,
+            color
+        };
+    }).sort((a, b) => b.count - a.count); // Sort by count (highest first)
 }
