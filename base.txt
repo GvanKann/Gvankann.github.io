@@ -1,0 +1,18 @@
+{
+  "posts": [
+    {
+      "id": "welcome-post",
+      "title": "Welcome to My Blog!",
+      "date": "2024-01-15",
+      "tags": ["welcome", "introduction"],
+      "content": "# Hello World!\n\nWelcome to my personal blog. I'll be sharing thoughts on:\n\n- Law and legal studies\n- Technology and programming\n- Books and philosophy\n- And much more!\n\nStay tuned for regular updates!"
+    },
+    {
+      "id": "why-i-started-blogging",
+      "title": "Why I Started Blogging",
+      "date": "2024-01-20",
+      "tags": ["blogging", "personal", "motivation"],
+      "content": "## The Journey Begins\n\nStarting a blog has been on my mind for months. As a law student, I realized that **writing regularly** helps me:\n\n1. Organize my thoughts\n2. Share knowledge with others\n3. Build a portfolio of my work\n4. Connect with like-minded people\n\n### What You Can Expect\n\nI plan to post about:\n- Legal analysis and case studies\n- Study tips for law students\n- Programming projects\n- Book reviews and recommendations\n\nThanks for joining me on this journey!"
+    }
+  ]
+}

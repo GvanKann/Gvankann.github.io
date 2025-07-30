@@ -1,11 +1,11 @@
 /**
  * TweetBlog - A Twitter-like blog interface
- * This script handles loading blog posts from Markdown files (listed in a manifest) 
+ * This script handles loading blog posts from a JSON file
  * and displaying them as Twitter-style "tweets" on the main page.
  */
 
-// Configuration - Path to the manifest file listing all .md posts
-const manifestFilePath = 'posts/posts-manifest.json';
+// Configuration - Path to the JSON file containing all posts
+const postsDataPath = 'posts.json';
 const defaultProfilePictureUrl = 'https://placehold.co/48x48/1da1f2/ffffff?text=P'; // Default if main one not found
 
 // DOM References
@@ -75,7 +75,7 @@ function setupEventListeners() {
 }
 
 /**
- * Load all blog posts listed in the manifest file.
+ * Load all blog posts from the JSON file.
  */
 async function loadPosts() {
     if (!postsContainer || !postCountElement) {
@@ -84,77 +84,60 @@ async function loadPosts() {
     }
 
     try {
-        postsContainer.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><p>Loading posts manifest...</p></div>';
+        postsContainer.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><p>Loading posts...</p></div>';
         
-        let postFilenames = [];
+        let postsData = [];
         try {
-            const manifestResponse = await fetch(manifestFilePath);
-            if (!manifestResponse.ok) {
-                throw new Error(`Failed to load post manifest: ${manifestFilePath}. Status: ${manifestResponse.status} ${manifestResponse.statusText}`);
+            const response = await fetch(postsDataPath);
+            if (!response.ok) {
+                throw new Error(`Failed to load posts data: ${postsDataPath}. Status: ${response.status} ${response.statusText}`);
             }
-            postFilenames = await manifestResponse.json();
+            const jsonData = await response.json();
+            postsData = jsonData.posts || [];
             
-            if (!Array.isArray(postFilenames) || !postFilenames.every(item => typeof item === 'string')) {
-                 console.error('Post manifest is not a valid array of filenames. Content:', postFilenames);
-                 throw new Error('Post manifest is not a valid array of filenames.');   
+            if (!Array.isArray(postsData)) {
+                console.error('Posts data is not a valid array. Content:', postsData);
+                throw new Error('Posts data is not a valid array.');   
             }
 
-        } catch (manifestError) {
-            console.error(manifestError);
-            postsContainer.innerHTML = `<div class="error-message">Could not load the list of posts. <br>Ensure <code>${manifestFilePath}</code> exists and is a valid JSON array of filenames. <br><small>Error: ${manifestError.message}</small></div>`;
+        } catch (error) {
+            console.error(error);
+            postsContainer.innerHTML = `<div class="error-message">Could not load posts data. <br>Ensure <code>${postsDataPath}</code> exists and has a valid "posts" array. <br><small>Error: ${error.message}</small></div>`;
             postCountElement.textContent = 0;
             return; 
         }
 
-        if (postFilenames.length === 0) {
-            postsContainer.innerHTML = '<div class="no-posts">No posts listed in the manifest. Add filenames to <code>posts/posts-manifest.json</code>.</div>';
+        if (postsData.length === 0) {
+            postsContainer.innerHTML = '<div class="no-posts">No posts found. Add posts to the posts.json file.</div>';
             postCountElement.textContent = 0;
             populateSidebarTags(extractAllTags([])); // Still populate sidebar for UI consistency
             return;
         }
         
-        postsContainer.innerHTML = `<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><p>Loading ${postFilenames.length} post(s)...</p></div>`;
-
-        const fetchedPosts = await Promise.all(postFilenames.map(async (filename) => {
-            try {
-                const cleanFilename = filename.startsWith('/') ? filename.substring(1) : filename;
-                const postPath = `posts/${cleanFilename}`;
-                const response = await fetch(postPath); 
-                if (!response.ok) {
-                    throw new Error(`Failed to load ${postPath} (Status: ${response.status} ${response.statusText})`);
-                }
-                const markdown = await response.text();
-                return {
-                    filename: cleanFilename,
-                    markdown,
-                    ...parseFrontMatter(markdown, cleanFilename) // Pass filename for better error reporting
-                };
-            } catch (error) {
-                console.error(`Error loading post ${filename}:`, error.message);
-                // Return a special object or null to indicate failure for this specific post
-                return { filename, error: true, errorMessage: error.message };
+        // Process posts data
+        const processedPosts = postsData.map(post => {
+            // Validate required fields
+            if (!post.title || !post.content) {
+                console.warn(`Post with ID ${post.id || 'unknown'} is missing required fields (title or content)`);
+                return null;
             }
-        }));
-        
-        // Separate successful posts from errors
-        const successfulPosts = fetchedPosts.filter(post => post && !post.error);
-        const erroredPosts = fetchedPosts.filter(post => post && post.error);
+            
+            return {
+                id: post.id || generateId(post.title),
+                title: post.title,
+                date: post.date || new Date().toISOString().split('T')[0],
+                tags: Array.isArray(post.tags) ? post.tags : [],
+                content: post.content || ''
+            };
+        }).filter(post => post !== null); // Remove invalid posts
 
-        if (erroredPosts.length > 0) {
-            console.warn(`Could not load ${erroredPosts.length} post(s):`);
-            erroredPosts.forEach(p => console.warn(`- ${p.filename}: ${p.errorMessage}`));
-        }
-
-        allPosts = successfulPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        allPosts = processedPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
         
         postCountElement.textContent = allPosts.length;
         
-        if (allPosts.length === 0 && postFilenames.length > 0) {
-             postsContainer.innerHTML = '<div class="error-message">Posts were listed in the manifest, but none could be loaded successfully. Check the console for errors regarding individual post files (e.g., missing front matter, file not found).</div>';
-        } else if (allPosts.length === 0 && postFilenames.length === 0) {
-             // This case is handled above
-        }
-        else {
+        if (allPosts.length === 0) {
+            postsContainer.innerHTML = '<div class="error-message">Posts were found in the JSON file, but none have valid data. Check that each post has at least a title and content.</div>';
+        } else {
             displayPosts(allPosts);
         }
         
@@ -168,6 +151,16 @@ async function loadPosts() {
     }
 }
 
+/**
+ * Generate a simple ID from a title
+ * @param {string} title - Post title
+ * @returns {string} - Generated ID
+ */
+function generateId(title) {
+    return title.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+}
 
 /**
  * Extract all unique tags from the posts
@@ -207,7 +200,8 @@ function getTagColor(tagName) {
         'books': '#d35400', 'movies': '#8e44ad', 'javascript': '#f0db4f',
         'web development': '#007acc', 'tutorial': '#5cb85c',
         'legal writing': '#8a2be2', 'constitutional law': '#1da1f2',
-        'civil rights': '#ff6347', 'law school': '#2ecc71', 'case studies': '#f39c12'
+        'civil rights': '#ff6347', 'law school': '#2ecc71', 'case studies': '#f39c12',
+        'programming': '#4285f4', 'beginners': '#ff9800'
     };
     const normalizedTag = String(tagName).toLowerCase(); // Ensure tagName is a string
     if (tagColors[normalizedTag]) return tagColors[normalizedTag];
@@ -266,7 +260,7 @@ function displayPosts(postsToDisplay) {
 function createPostElement(post) {
     const postEl = document.createElement('div');
     postEl.className = 'post';
-    postEl.dataset.filename = post.filename;
+    postEl.dataset.postId = post.id;
     
     const previewContent = removeMarkdownFormatting(getFirstParagraph(post.content));
     const dateFormatted = formatDate(post.date);
@@ -437,71 +431,6 @@ function updateSidebarTagHighlight(activeTag) {
             }
         }
     });
-}
-
-/**
- * Parse front matter from markdown content
- * @param {string} markdown - Raw markdown content
- * @param {string} filename - Filename for error reporting
- * @returns {Object} - Extracted front matter (title, date, tags) and content
- */
-function parseFrontMatter(markdown, filename = "unknown file") {
-    const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-    const match = markdown.match(frontMatterRegex);
-    
-    let frontMatterData = {
-        title: '', // Initialize as empty, will be set or defaulted
-        date: new Date().toISOString().split('T')[0], 
-        tags: []
-    };
-    let contentPart = markdown;
-
-    if (match && match[1] && match[2]) {
-        const frontMatterStr = match[1];
-        contentPart = match[2].trim(); // Trim content part
-        
-        const lines = frontMatterStr.split('\n');
-        lines.forEach(line => {
-            const [key, ...valueParts] = line.split(':');
-            const trimmedKey = key.trim().toLowerCase(); // Normalize key
-            if (trimmedKey && valueParts.length) {
-                const value = valueParts.join(':').trim();
-                
-                if (trimmedKey === 'tags') {
-                    if (value.startsWith('[') && value.endsWith(']')) {
-                        frontMatterData.tags = value.substring(1, value.length - 1).split(',').map(tag => tag.trim()).filter(tag => tag); 
-                    } else {
-                        frontMatterData.tags = value.split(',').map(tag => tag.trim()).filter(tag => tag); 
-                    }
-                } else {
-                    frontMatterData[trimmedKey] = value;
-                }
-            }
-        });
-    } else {
-        console.warn(`Front matter not found or malformed in ${filename}. Ensure it starts and ends with '---'.`);
-    }
-    
-    if (!frontMatterData.title) {
-        const titleMatchInContent = contentPart.match(/^#\s+(.+)$/m);
-        if (titleMatchInContent && titleMatchInContent[1]) {
-            frontMatterData.title = titleMatchInContent[1];
-        } else {
-            frontMatterData.title = 'Untitled Post'; // Default title if no H1 found
-            console.warn(`Title not found in front matter or as H1 in ${filename}. Defaulting to "Untitled Post".`);
-        }
-    }
-    if (!frontMatterData.date || isNaN(new Date(frontMatterData.date))) {
-        console.warn(`Invalid or missing date in front matter for ${filename}. Defaulting to today.`);
-        frontMatterData.date = new Date().toISOString().split('T')[0];
-    }
-    
-    return {
-        title: frontMatterData.title,
-        date: frontMatterData.date,
-        tags: frontMatterData.tags,
-        content: contentPart
-    };
 }
 
 /**
