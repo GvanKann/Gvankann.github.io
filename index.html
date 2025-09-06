@@ -3,204 +3,1586 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TweetBlog</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Kanniganti & Co. - Modern Law Firm</title>
+    
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ===== CSS RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Color palette - Purple, White, Black theme */
+            --primary-purple: #6a0dad;
+            --secondary-purple: #8a2be2;
+            --light-purple: rgba(106, 13, 173, 0.1);
+            --white: #ffffff;
+            --black: #0a0a0a;
+            --dark-gray: #1a1a1a;
+            --medium-gray: #2a2a2a;
+            --light-gray: #888;
+            
+            /* Typography */
+            --font-headline: 'Montserrat', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            
+            /* Animation timing */
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.2s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== PRELOADER ANIMATION ===== */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-content {
+            text-align: center;
+        }
+
+        .preloader-logo {
+            font-family: var(--font-headline);
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        .preloader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--light-purple);
+            border-top: 3px solid var(--primary-purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ===== NAVIGATION BAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(106, 13, 173, 0.2);
+            z-index: 1000;
+            padding: 1rem 0;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .navbar.visible {
+            transform: translateY(0);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin-left: auto;
+        }
+
+        .nav-item a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-fast);
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-item a:hover,
+        .nav-item a.active {
+            color: var(--primary-purple);
+            background: var(--light-purple);
+        }
+
+        /* Mobile menu toggle */
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .mobile-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--white);
+            transition: var(--transition-fast);
+        }
+
+        /* ===== PAGE CONTAINER ===== */
+        .page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.3;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(10, 10, 10, 0.8), 
+                rgba(106, 13, 173, 0.3));
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            z-index: 1;
+            animation: fadeInUp 1.2s ease-out 0.5s both;
+        }
+
+        .hero-title {
+            font-family: var(--font-headline);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--white), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            color: var(--light-gray);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
+            color: var(--white);
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(106, 13, 173, 0.4);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== FLOWING BACKGROUND ELEMENTS ===== */
+        .bg-blob {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--light-purple);
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-blob:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-blob:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .bg-blob:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-20px) rotate(120deg);
+            }
+            66% {
+                transform: translateY(20px) rotate(240deg);
+            }
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            font-family: var(--font-headline);
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, var(--white), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--light-gray);
+            max-width: 600px;
+            margin: 0 auto 4rem;
+        }
+
+        /* ===== CARDS & GRID LAYOUTS ===== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: var(--dark-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-purple);
+            box-shadow: 0 20px 40px rgba(106, 13, 173, 0.2);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            color: var(--primary-purple);
+            margin-bottom: 1.5rem;
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1);
+        }
+
+        .card-title {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card-text {
+            color: var(--light-gray);
+            line-height: 1.6;
+        }
+
+        /* ===== TEAM GRID ===== */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .team-card {
+            background: var(--dark-gray);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition-smooth);
+            border: 1px solid var(--medium-gray);
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-purple);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+            color: var(--white);
+        }
+
+        .team-name {
+            font-family: var(--font-headline);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-role {
+            color: var(--primary-purple);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .team-bio {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+
+        /* ===== ACCORDION FOR SERVICES ===== */
+        .accordion {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .accordion-item {
+            background: var(--dark-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .accordion-item:hover {
+            border-color: var(--primary-purple);
+        }
+
+        .accordion-header {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: var(--transition-fast);
+        }
+
+        .accordion-header:hover {
+            background: var(--light-purple);
+        }
+
+        .accordion-icon {
+            color: var(--primary-purple);
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 200px;
+        }
+
+        .accordion-body {
+            padding: 0 2rem 1.5rem;
+            color: var(--light-gray);
+        }
+
+        /* ===== CONTACT FORM ===== */
+        .contact-form {
+            background: var(--dark-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: var(--black);
+            border: 2px solid var(--medium-gray);
+            border-radius: 12px;
+            color: var(--white);
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+        }
+
+        .form-label {
+            position: absolute;
+            top: 1rem;
+            left: 1.5rem;
+            color: var(--light-gray);
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+            pointer-events: none;
+        }
+
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label,
+        .form-textarea:focus + .form-label,
+        .form-textarea:not(:placeholder-shown) + .form-label {
+            top: -0.7rem;
+            left: 1rem;
+            font-size: 0.8rem;
+            color: var(--primary-purple);
+            background: var(--dark-gray);
+            padding: 0 0.5rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(106, 13, 173, 0.3);
+        }
+
+        /* ===== CONTACT INFO ===== */
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .contact-item {
+            text-align: center;
+            padding: 2rem;
+            background: var(--dark-gray);
+            border-radius: 15px;
+            border: 1px solid var(--medium-gray);
+            transition: var(--transition-smooth);
+        }
+
+        .contact-item:hover {
+            border-color: var(--primary-purple);
+            transform: translateY(-5px);
+        }
+
+        .contact-item i {
+            font-size: 2.5rem;
+            color: var(--primary-purple);
+            margin-bottom: 1rem;
+        }
+
+        .contact-item h3 {
+            font-family: var(--font-headline);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-item p {
+            color: var(--light-gray);
+        }
+
+        /* ===== BLOG CARDS ===== */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .blog-card {
+            background: var(--dark-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-purple);
+            box-shadow: 0 20px 40px rgba(106, 13, 173, 0.2);
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 3rem;
+        }
+
+        .blog-content {
+            padding: 2rem;
+        }
+
+        .blog-date {
+            color: var(--primary-purple);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .blog-title {
+            font-family: var(--font-headline);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .blog-excerpt {
+            color: var(--light-gray);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .read-more {
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-fast);
+        }
+
+        .read-more:hover {
+            color: var(--secondary-purple);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--dark-gray);
+            border-top: 1px solid var(--medium-gray);
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-family: var(--font-headline);
+            font-size: 1.2rem;
+            color: var(--primary-purple);
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--light-gray);
+            text-decoration: none;
+            line-height: 1.6;
+            transition: var(--transition-fast);
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-purple);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--medium-gray);
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .section {
+                padding: 4rem 0;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-form {
+                padding: 2rem;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="page-layout">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <i class="fas fa-pen-fancy"></i>
-            </div>
-            
-            <div class="sidebar-nav">
-                <a href="#" class="sidebar-item active" data-section="profile">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </a>
-                <a href="#" class="sidebar-item" data-section="home">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="#" class="sidebar-item" data-section="about">
-                    <i class="fas fa-info-circle"></i>
-                    <span>About</span>
-                </a>
-                <a href="#" class="sidebar-item" data-section="socials">
-                    <i class="fas fa-share-nodes"></i>
-                    <span>Socials</span>
-                </a>
-            </div>
-            
-            <div class="sidebar-section">Tags</div>
-            <div class="tags-container" id="sidebar-tags">
-                <!-- Tags will be added dynamically here -->
-            </div>
-            
-            <button id="theme-toggle">
-                <i class="fas fa-moon"></i>
-                <span>Dark Mode</span>
-            </button>
+    <!-- ===== PRELOADER ===== -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">Kanniganti & Co.</div>
+            <div class="preloader-spinner"></div>
         </div>
-        
-        <!-- Main Content -->
-        <div class="main-content">
+    </div>
+
+    <!-- ===== NAVIGATION BAR ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">Kanniganti & Co.</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="about">About Us</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="services">Practice Areas</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="contact">Contact</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="blog">Insights</a></li>
+            </ul>
+            <div class="mobile-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HOME PAGE ===== -->
+    <div class="page active" id="home-page">
+        <section class="hero">
+            <!-- Video background placeholder - using a CSS animation instead for demo -->
+            <div class="hero-video" style="background: linear-gradient(45deg, #1a1a1a, #2a1a3a); position: absolute; top: 0; left: 0; width: 100%; height: 100%; animation: wave 8s ease-in-out infinite;"></div>
+            <div class="hero-overlay"></div>
+            
+            <!-- Floating background elements -->
+            <div class="bg-blob"></div>
+            <div class="bg-blob"></div>
+            <div class="bg-blob"></div>
+            
+            <div class="hero-content">
+                <h1 class="hero-title">Legal Excellence Redefined</h1>
+                <p class="hero-subtitle">Innovative legal solutions with a modern approach. We combine cutting-edge technology with traditional legal expertise to deliver exceptional results for our clients.</p>
+                <a href="#" class="cta-button" data-page="contact">
+                    Get Started Today
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Values Section -->
+        <section class="section">
             <div class="container">
-                <!-- Header section (similar to Twitter header) -->
-                <header class="profile-header">
-                    <div class="banner">
-                        <img src="images/cover_image.jpg" alt="Banner Image" id="banner-image">
+                <h2 class="section-title">Why Choose Kanniganti & Co.</h2>
+                <p class="section-subtitle">We deliver exceptional legal services with a focus on innovation, integrity, and results.</p>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-icon"><i class="fas fa-lightbulb"></i></div>
+                        <h3 class="card-title">Innovative Approach</h3>
+                        <p class="card-text">We leverage cutting-edge technology and modern methodologies to provide efficient, effective legal solutions for the digital age.</p>
                     </div>
-                    <div class="profile-info">
-                        <div class="profile-picture">
-                            <img src="images/profile_picture.jpg" alt="Profile Picture" id="profile-picture-img">
-                        </div>
-                        <div class="profile-details">
-                            <h1 class="name">Jeevan Kanniganti</h1>
-                            <p class="username">@jkanniganti</p>
-                            <p class="bio">First year law student. Sharing thoughts on law, geo-politics, and random stuff that intrests me.</p>
-                            <div class="stats">
-                                <div class="stat">
-                                    <span class="count" id="post-count">0</span>
-                                    <span class="label">Posts</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="count">42</span>
-                                    <span class="label">Following</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="count">128</span>
-                                    <span class="label">Followers</span>
-                                </div>
-                            </div>
-                        </div>
+                    
+                    <div class="card">
+                        <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h3 class="card-title">Proven Results</h3>
+                        <p class="card-text">With over 500 successful cases and a 95% client satisfaction rate, we have a track record of delivering exceptional outcomes.</p>
                     </div>
-                </header>
+                    
+                    <div class="card">
+                        <div class="card-icon"><i class="fas fa-users"></i></div>
+                        <h3 class="card-title">Client-Focused</h3>
+                        <p class="card-text">Your success is our priority. We provide personalized attention and tailored strategies for each unique legal challenge.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon"><i class="fas fa-clock"></i></div>
+                        <h3 class="card-title">24/7 Availability</h3>
+                        <p class="card-text">Legal issues don't follow business hours. Our team is available around the clock to address your urgent legal needs.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
-                <!-- Main content with posts/tweets -->
-                <main class="content">
-                    <div class="tabs">
-                        <button class="tab active" data-tab="posts">Posts</button>
-                        <button class="tab" data-tab="about">About</button>
-                        <button class="tab" data-tab="socials">Socials</button>
+    <!-- ===== ABOUT US PAGE ===== -->
+    <div class="page" id="about-page">
+        <section class="section" style="padding-top: 8rem;">
+            <div class="container">
+                <h2 class="section-title">About Kanniganti & Co.</h2>
+                <p class="section-subtitle">A modern law firm built on traditional values of integrity, excellence, and client service.</p>
+                
+                <div style="max-width: 800px; margin: 0 auto 4rem; text-align: center;">
+                    <p style="font-size: 1.1rem; color: var(--light-gray); line-height: 1.8; margin-bottom: 2rem;">
+                        Founded in 2010, Kanniganti & Co. has grown from a small practice to one of the region's most respected law firms. Our team of experienced attorneys combines deep legal expertise with innovative approaches to deliver exceptional results for our clients.
+                    </p>
+                    <p style="font-size: 1.1rem; color: var(--light-gray); line-height: 1.8;">
+                        We believe that legal services should be accessible, transparent, and tailored to meet the unique needs of each client. Our commitment to excellence and innovation has earned us recognition as leaders in the legal community.
+                    </p>
+                </div>
+
+                <h3 class="section-title" style="font-size: 2rem; margin-bottom: 2rem;">Our Team</h3>
+                
+                <div class="team-grid">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h4 class="team-name">Jeevan Kanniganti</h4>
+                        <p class="team-role">Named Partner</p>
+                        <p class="team-bio">With over 20 years of experience in corporate law, Jeevan leads our firm with vision and expertise in complex business transactions.</p>
                     </div>
                     
-                    <!-- Posts Tab Content -->
-                    <div class="tab-content active" id="posts-tab">
-                        <div class="posts-container" id="posts-container">
-                            <!-- Posts will be dynamically inserted here by JavaScript -->
-                            <div class="loading-spinner">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <p>Loading posts...</p>
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-female"></i>
+                        </div>
+                        <h4 class="team-name">Izel Hannah Inja</h4>
+                        <p class="team-role">Senior Partner</p>
+                        <p class="team-bio">A litigation specialist with a passion for justice, Izel has successfully represented clients in high-profile civil and criminal cases.</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-male"></i>
+                        </div>
+                        <h4 class="team-name">Jia Jain</h4>
+                        <p class="team-role">Senior Partner</p>
+                        <p class="team-bio">Jia specializes in intellectual property law and has helped numerous startups and established companies protect their innovations.</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4 class="team-name">Girish Aradhya</h4>
+                        <p class="team-role">Senior Advocate</p>
+                        <p class="team-bio">Girish brings extensive experience in civil litigation and has successfully handled complex legal matters for our clients.</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h4 class="team-name">Ganga Mohith</h4>
+                        <p class="team-role">Senior Advocate</p>
+                        <p class="team-bio">Ganga specializes in commercial law and provides strategic legal counsel to businesses of all sizes.</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-female"></i>
+                        </div>
+                        <h4 class="team-name">Hrushitha Vandanapu</h4>
+                        <p class="team-role">Family Law Attorney</p>
+                        <p class="team-bio">Hrushitha brings compassion and expertise to family law matters, helping clients navigate difficult personal legal challenges.</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h4 class="team-name">Charan Chittipeddi</h4>
+                        <p class="team-role">M & A Attorney</p>
+                        <p class="team-bio">Charan specializes in mergers and acquisitions, providing expert guidance on complex corporate transactions and deal structuring.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== PRACTICE AREAS PAGE ===== -->
+    <div class="page" id="services-page">
+        <section class="section" style="padding-top: 8rem;">
+            <div class="container">
+                <h2 class="section-title">Practice Areas</h2>
+                <p class="section-subtitle">Comprehensive legal services tailored to meet your unique needs across multiple practice areas.</p>
+                
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span><i class="fas fa-building" style="margin-right: 1rem; color: var(--primary-purple);"></i>Corporate Law</span>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p>Comprehensive corporate legal services including mergers & acquisitions, corporate governance, securities law, and business formation. We help businesses navigate complex regulatory environments and strategic transactions.</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- About Tab Content -->
-                    <div class="tab-content" id="about-tab">
-                        <div class="about-content">
-                            <h2>About Me</h2>
-                            <p>I'm a first-year law student at Woxsen University Law School with a passion for Criminal law and Quant finance.</p>
-                            
-                            <h3>Education</h3>
-                            <div class="about-item">
-                                <div class="about-item-icon">
-                                    <i class="fas fa-graduation-cap"></i>
-                                </div>
-                                <div class="about-item-content">
-                                    <h4>J.D. Candidate</h4>
-                                    <p>Woxsen University Law School</p>
-                                    <p class="about-date">2025 - Present</p>
-                                </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span><i class="fas fa-gavel" style="margin-right: 1rem; color: var(--primary-purple);"></i>Litigation</span>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p>Expert representation in civil and commercial litigation, including contract disputes, employment law, personal injury claims, and appellate matters. Our trial attorneys have a proven track record in courtroom advocacy.</p>
                             </div>
-                            <div class="about-item">
-                                <div class="about-item-icon">
-                                    <i class="fas fa-university"></i>
-                                </div>
-                                <div class="about-item-content">
-                                    <h4>Matric Exam Distinction Student</h4>
-                                    <p>Central Board of Secondary Education </p>
-                                    <p class="about-date">2020 - 2022</p>
-                                </div>
-                            </div>
-                            
-                            <h3>Interests</h3>
-                            <div class="interests">
-                                <span class="interest-tag">Criminal Law</span>
-                                <span class="interest-tag">Philosophy</span>
-                                <span class="interest-tag">Reading</span>
-                                <span class="interest-tag">Religion</span>
-                                <span class="interest-tag">Legal Writing</span>
-                                <span class="interest-tag">Debate</span>
-                                <span class="interest-tag">Politics</span>
-                                <span class="interest-tag">Qunat Finance</span>
-                                <span class="interest-tag">Formula 1</span>
-                                <span class="interest-tag">Music</span>
-                                <span class="interest-tag">Technology</span>
-                                <span class="interest-tag">Programming</span>
-                            </div>
-                            
-                            <h3>Current Courses</h3>
-                            <ul class="courses-list">
-                                <li>Civil Procedure</li>
-                                <li>Contracts</li>
-                                <li>Criminal Law</li>
-                                <li>Legal Research & Writing</li>
-                                <li>Torts</li>
-                            </ul>
                         </div>
                     </div>
                     
-                    <!-- Socials Tab Content -->
-                    <div class="tab-content" id="socials-tab">
-                        <div class="socials-content">
-                            <h2>Connect With Me</h2>
-                            <p>Follow me on these platforms to stay updated with my law school journey!</p>
-                            
-                            <div class="social-links">
-                                <a href="https://www.linkedin.com/in/jkanniganti/" class="social-link">
-                                    <i class="fab fa-linkedin"></i>
-                                    <span>LinkedIn</span>
-                                    <p>Connect professionally</p>
-                                </a>
-                                <a href="https://x.com/purplepeterpant" class="social-link">
-                                    <i class="fab fa-twitter"></i>
-                                    <span>Twitter / X</span>
-                                    <p>Daily law school updates</p>
-                                </a>
-                                <a href="https://www.instagram.com/jeevankanniganti/" class="social-link">
-                                    <i class="fab fa-instagram"></i>
-                                    <span>Instagram</span>
-                                    <p>Behind the scenes of law school</p>
-                                </a>
-                                <a href="https://github.com/GvanKann" class="social-link">
-                                    <i class="fab fa-github"></i>
-                                    <span>GitHub</span>
-                                    <p>Legal tech projects</p>
-                                </a>
-                                <a href="#" class="social-link">
-                                    <i class="fas fa-podcast"></i>
-                                    <span>My Podcast</span>
-                                    <p>"Law School Diaries"</p>
-                                </a>
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span><i class="fas fa-lightbulb" style="margin-right: 1rem; color: var(--primary-purple);"></i>Intellectual Property</span>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p>Complete IP protection services including patent prosecution, trademark registration, copyright matters, and IP litigation. We help innovators and businesses protect their valuable intellectual assets.</p>
                             </div>
                         </div>
                     </div>
-                </main>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span><i class="fas fa-home" style="margin-right: 1rem; color: var(--primary-purple);"></i>Real Estate</span>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p>Full-service real estate law including residential and commercial transactions, development projects, zoning issues, and real estate litigation. We ensure smooth property transactions and resolve disputes efficiently.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span><i class="fas fa-heart" style="margin-right: 1rem; color: var(--primary-purple);"></i>Family Law</span>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p>Compassionate family law services including divorce, child custody, adoption, and domestic relations matters. We provide sensitive yet effective representation during life's most challenging transitions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span><i class="fas fa-shield-alt" style="margin-right: 1rem; color: var(--primary-purple);"></i>Criminal Defense</span>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p>Aggressive criminal defense representation for white-collar crimes, DUI, drug offenses, and all criminal matters. We protect your rights and fight for the best possible outcome in your case.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== CONTACT PAGE ===== -->
+    <div class="page" id="contact-page">
+        <section class="section" style="padding-top: 8rem;">
+            <div class="container">
+                <h2 class="section-title">Contact Us</h2>
+                <p class="section-subtitle">Ready to discuss your legal needs? Get in touch with our experienced team today.</p>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3>Office Location</h3>
+                        <p>123 Legal Plaza<br>Downtown District<br>Metropolitan City, MC 12345</p>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <h3>Phone</h3>
+                        <p>Main: (555) 123-4567<br>Emergency: (555) 987-6543</p>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email</h3>
+                        <p>info@kannigantilaw.com<br>consultation@kannigantilaw.com</p>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <h3>Hours</h3>
+                        <p>Mon-Fri: 9:00 AM - 6:00 PM<br>Sat: 10:00 AM - 2:00 PM<br>Emergency: 24/7</p>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder=" " required>
+                        <label class="form-label">Full Name</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="email" class="form-input" placeholder=" " required>
+                        <label class="form-label">Email Address</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="tel" class="form-input" placeholder=" ">
+                        <label class="form-label">Phone Number</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder=" ">
+                        <label class="form-label">Legal Matter Type</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <textarea class="form-textarea" rows="5" placeholder=" " required></textarea>
+                        <label class="form-label">Message</label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+
+                <!-- Placeholder Map -->
+                <div style="margin-top: 4rem; text-align: center;">
+                    <div style="width: 100%; height: 300px; background: var(--dark-gray); border: 2px solid var(--medium-gray); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: var(--light-gray);">
+                        <div>
+                            <i class="fas fa-map" style="font-size: 3rem; color: var(--primary-purple); margin-bottom: 1rem;"></i>
+                            <p>Interactive Map Placeholder</p>
+                            <p style="font-size: 0.9rem;">123 Legal Plaza, Downtown District</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== BLOG/INSIGHTS PAGE ===== -->
+    <div class="page" id="blog-page">
+        <section class="section" style="padding-top: 8rem;">
+            <div class="container">
+                <h2 class="section-title">Legal Insights & News</h2>
+                <p class="section-subtitle">Stay informed with the latest legal developments, insights, and expert analysis from our team.</p>
+                
+                <div class="blog-grid">
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <i class="fas fa-passport"></i>
+                        </div>
+                        <div class="blog-content">
+                            <p class="blog-date">September 1, 2025</p>
+                            <h3 class="blog-title">Immigration and Foreigners Act, 2025: A New Era of Border Security</h3>
+                            <p class="blog-excerpt">The new Immigration and Foreigners Act, 2025, which came into force on September 1, 2025, replaces four colonial-era immigration laws and introduces stringent penalties for forged travel documents and other violations, aiming to reinforce border security and immigration control.</p>
+                            <a href="#" class="read-more">Read More →</a>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="blog-content">
+                            <p class="blog-date">April 1, 2026</p>
+                            <h3 class="blog-title">Income-tax Act, 2025: Modernizing Direct Taxation</h3>
+                            <p class="blog-excerpt">The new Income-tax Act, 2025, passed by both houses of Parliament in mid-August 2025 and receiving Presidential assent on August 21, 2025, modernizes direct taxation by replacing the 1961 Act, simplifies compliance, and introduces a unified "Tax Year" concept effective from April 1, 2026.</p>
+                            <a href="#" class="read-more">Read More →</a>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="blog-content">
+                            <p class="blog-date">August 2025</p>
+                            <h3 class="blog-title">National Sports Governance Act, 2025: Transforming Sports Administration</h3>
+                            <p class="blog-excerpt">The National Sports Governance Act, 2025, passed by both houses of Parliament in August 2025, establishes a statutory structure for the governance of sports bodies, embeds ethical codes, dispute resolution mechanisms, and aligns with Olympic and Paralympic frameworks.</p>
+                            <a href="#" class="read-more">Read More →</a>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                        <div class="blog-content">
+                            <p class="blog-date">August 21, 2025</p>
+                            <h3 class="blog-title">Mines and Minerals Amendment Act, 2025: Strengthening Critical Mineral Strategy</h3>
+                            <p class="blog-excerpt">The Mines and Minerals (Development and Regulation) Amendment Act, 2025, receiving Presidential assent on August 21, 2025, introduces mineral exchanges, allows limited lease extensions (up to 10–30%), expands the mandate of the National Mineral Exploration and Development Trust, and strengthens critical mineral strategy.</p>
+                            <a href="#" class="read-more">Read More →</a>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="blog-content">
+                            <p class="blog-date">August 21, 2025</p>
+                            <h3 class="blog-title">Online Gaming Bill, 2025: Regulating the Digital Gaming Landscape</h3>
+                            <p class="blog-excerpt">The Promotion and Regulation of Online Gaming Bill, 2025, passed by Lok Sabha on August 20 and Rajya Sabha on August 21, 2025, categorizes games into e-sports, educational/social games, and money-based games, with e-sports encouraged and betting-based games banned, imposing fines up to ₹1 crore and jail up to three years.</p>
+                            <a href="#" class="read-more">Read More →</a>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <i class="fas fa-ship"></i>
+                        </div>
+                        <div class="blog-content">
+                            <p class="blog-date">August 11, 2025</p>
+                            <h3 class="blog-title">Carriage of Goods by Sea Act, 2025: Modernizing Maritime Transport</h3>
+                            <p class="blog-excerpt">The Carriage of Goods by Sea Act, 2025, passed by Lok Sabha on March 28, 2025, and Rajya Sabha on August 11, 2025, replaces the 1925 law, updates the legal framework for maritime cargo transport to align with Hague–Visby and Hamburg Rules, and addresses multimodal transport concerns.</p>
+                            <a href="#" class="read-more">Read More →</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Kanniganti & Co.</h3>
+                    <p>A modern law firm dedicated to providing exceptional legal services with integrity, innovation, and results. Contact us today to discuss your legal needs.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Practice Areas</h3>
+                    <p><a href="#">Corporate Law</a></p>
+                    <p><a href="#">Litigation</a></p>
+                    <p><a href="#">Intellectual Property</a></p>
+                    <p><a href="#">Real Estate</a></p>
+                    <p><a href="#">Family Law</a></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p>123 Legal Plaza<br>Downtown District<br>Metropolitan City, MC 12345</p>
+                    <p>Phone: (555) 123-4567</p>
+                    <p>Email: info@kannigantilaw.com</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Office Hours</h3>
+                    <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                    <p>Saturday: 10:00 AM - 2:00 PM</p>
+                    <p>Sunday: Closed</p>
+                    <p>Emergency consultations available 24/7</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Kanniganti & Co. All rights reserved.</p>
+                <p style="margin-top: 1rem; font-size: 0.8rem;">
+                    <strong>Disclaimer:</strong> This website is for informational purposes only and does not constitute legal advice. 
+                    The information contained herein is not intended to create an attorney-client relationship. 
+                    Please contact our office directly to discuss your specific legal needs. 
+                    Prior results do not guarantee a similar outcome. 
+                    Licensed to practice law in [State/Jurisdiction].
+                </p>
             </div>
         </div>
-    </div>
+    </footer>
 
-    <!-- Modal for displaying full post content -->
-    <div id="post-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <div id="full-post-content"></div>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
+    <script>
+        // ===== JAVASCRIPT FOR INTERACTIVITY =====
+        
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // ===== PRELOADER ANIMATION =====
+            const preloader = document.getElementById('preloader');
+            
+            // Hide preloader after page loads
+            window.addEventListener('load', function() {
+                setTimeout(() => {
+                    preloader.classList.add('hidden');
+                }, 1500); // Show preloader for 1.5 seconds
+            });
+            
+            // ===== NAVBAR SCROLL BEHAVIOR =====
+            const navbar = document.getElementById('navbar');
+            
+            // Show navbar immediately when page loads
+            navbar.classList.add('visible');
+            
+            // Add scroll effect for navbar background opacity
+            function updateNavbar() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // Change navbar background opacity based on scroll position
+                if (scrollTop > 50) {
+                    navbar.style.background = 'rgba(10, 10, 10, 0.98)';
+                    navbar.style.borderBottomColor = 'rgba(106, 13, 173, 0.4)';
+                } else {
+                    navbar.style.background = 'rgba(10, 10, 10, 0.95)';
+                    navbar.style.borderBottomColor = 'rgba(106, 13, 173, 0.2)';
+                }
+            }
+            
+            window.addEventListener('scroll', function() {
+                requestAnimationFrame(updateNavbar);
+            });
+            
+            // ===== PAGE NAVIGATION SYSTEM =====
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+            
+            // Function to show specific page
+            function showPage(pageId) {
+                // Hide all pages
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Show selected page
+                const targetPage = document.getElementById(pageId + '-page');
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                }
+                
+                // Update active nav link
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                const activeLink = document.querySelector(`[data-page="${pageId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+                
+                // Smooth scroll to top
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+            
+            // Add click event listeners to nav links
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    showPage(pageId);
+                });
+            });
+            
+            // Handle CTA button navigation
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('cta-button') && e.target.hasAttribute('data-page')) {
+                    e.preventDefault();
+                    const pageId = e.target.getAttribute('data-page');
+                    showPage(pageId);
+                }
+            });
+            
+            // ===== ACCORDION FUNCTIONALITY =====
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                
+                header.addEventListener('click', function() {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all accordion items
+                    accordionItems.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                    });
+                    
+                    // Toggle current item
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+            
+            // ===== CONTACT FORM HANDLING =====
+            const contactForm = document.getElementById('contactForm');
+            
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form button
+                    const submitBtn = this.querySelector('.submit-btn');
+                    const originalText = submitBtn.textContent;
+                    
+                    // Show loading state
+                    submitBtn.textContent = 'Sending...';
+                    submitBtn.style.background = 'var(--light-gray)';
+                    submitBtn.disabled = true;
+                    
+                    // Simulate form submission
+                    setTimeout(() => {
+                        // Show success message
+                        submitBtn.textContent = 'Message Sent!';
+                        submitBtn.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+                        
+                        // Reset form
+                        this.reset();
+                        
+                        // Reset button after 3 seconds
+                        setTimeout(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.style.background = 'linear-gradient(45deg, var(--primary-purple), var(--secondary-purple))';
+                            submitBtn.disabled = false;
+                        }, 3000);
+                    }, 1500);
+                });
+            }
+            
+            // ===== SMOOTH SCROLL ENHANCEMENTS =====
+            // Add intersection observer for scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe cards and sections for scroll animations
+            const animatedElements = document.querySelectorAll('.card, .team-card, .blog-card, .contact-item');
+            
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+            
+            // ===== WAVE ANIMATION FOR HERO BACKGROUND =====
+            const heroVideo = document.querySelector('.hero-video');
+            if (heroVideo) {
+                // Create animated wave effect using CSS custom properties
+                let waveOffset = 0;
+                
+                function animateWave() {
+                    waveOffset += 0.02;
+                    const wave1 = Math.sin(waveOffset) * 20;
+                    const wave2 = Math.cos(waveOffset * 0.7) * 15;
+                    
+                    heroVideo.style.transform = `translateY(${wave1}px) translateX(${wave2}px) scale(1.05)`;
+                    requestAnimationFrame(animateWave);
+                }
+                
+                animateWave();
+            }
+            
+            // ===== MOBILE RESPONSIVENESS =====
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                    this.classList.toggle('active');
+                });
+            }
+            
+            // Close mobile menu when clicking nav links
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (navMenu.classList.contains('active')) {
+                        navMenu.classList.remove('active');
+                        mobileToggle.classList.remove('active');
+                    }
+                });
+            });
+            
+            // ===== ADDITIONAL HOVER EFFECTS =====
+            // Add ripple effect to buttons
+            function createRipple(event) {
+                const button = event.currentTarget;
+                const circle = document.createElement('span');
+                const diameter = Math.max(button.clientWidth, button.clientHeight);
+                const radius = diameter / 2;
+                
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+                circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+                circle.classList.add('ripple');
+                
+                const ripple = button.getElementsByClassName('ripple')[0];
+                if (ripple) {
+                    ripple.remove();
+                }
+                
+                button.appendChild(circle);
+            }
+            
+            // Apply ripple effect to buttons
+            const buttons = document.querySelectorAll('.cta-button, .submit-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', createRipple);
+            });
+            
+        });
+        
+        // ===== CSS FOR WAVE ANIMATION =====
+        const waveKeyframes = `
+            @keyframes wave {
+                0%, 100% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+            }
+            
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+            
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+            
+            /* Mobile Navigation Styles */
+            @media (max-width: 768px) {
+                .nav-menu {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: rgba(10, 10, 10, 0.98);
+                    flex-direction: column;
+                    padding: 2rem;
+                    transform: translateY(-100%);
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: all 0.3s ease;
+                }
+                
+                .nav-menu.active {
+                    transform: translateY(0);
+                    opacity: 1;
+                    visibility: visible;
+                }
+                
+                .mobile-toggle.active span:nth-child(1) {
+                    transform: rotate(45deg) translate(5px, 5px);
+                }
+                
+                .mobile-toggle.active span:nth-child(2) {
+                    opacity: 0;
+                }
+                
+                .mobile-toggle.active span:nth-child(3) {
+                    transform: rotate(-45deg) translate(7px, -6px);
+                }
+            }
+        `;
+        
+        // Inject additional CSS
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = waveKeyframes;
+        document.head.appendChild(styleSheet);
+        
+    </script>
 </body>
 </html>
