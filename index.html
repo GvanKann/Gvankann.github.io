@@ -3,46 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kanniganti & Co. - Modern Law Firm</title>
+    <title>Pharos - Study Abroad Legal Services</title>
     
-    <!-- Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* ===== CSS RESET & BASE STYLES ===== */
+        /* ================================================
+           CSS RESET & BASE STYLES
+           ================================================ */
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         :root {
-            /* Color palette - Purple, White, Black theme */
-            --primary-purple: #6a0dad;
-            --secondary-purple: #8a2be2;
-            --light-purple: rgba(106, 13, 173, 0.1);
-            --white: #ffffff;
-            --black: #0a0a0a;
-            --dark-gray: #1a1a1a;
-            --medium-gray: #2a2a2a;
-            --light-gray: #888;
+            /* Color Palette */
+            --primary-purple: #6366F1;
+            --light-purple: #A5B4FC;
+            --dark-purple: #1E1B4B;
+            --white: #FFFFFF;
+            --black: #0F172A;
+            --dark-gray: #1E293B;
+            --medium-gray: #64748B;
+            --light-gray: #94A3B8;
+            --accent-green: #10B981;
+            --light-mint: #D1FAE5;
             
             /* Typography */
             --font-headline: 'Montserrat', sans-serif;
             --font-body: 'Inter', sans-serif;
             
-            /* Animation timing */
-            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-fast: all 0.2s ease;
+            /* Spacing */
+            --section-padding: 80px 0;
+            --container-max-width: 1200px;
+            
+            /* Animation Durations */
+            --transition-fast: 0.3s;
+            --transition-medium: 0.5s;
+            --transition-slow: 0.8s;
         }
-
+        
         html {
             scroll-behavior: smooth;
         }
-
+        
         body {
             font-family: var(--font-body);
             background-color: var(--black);
@@ -50,236 +60,322 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
-
-        /* ===== PRELOADER ANIMATION ===== */
+        
+        /* ================================================
+           PRELOADER ANIMATION
+           ================================================ */
+        
         .preloader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--black);
+            background: linear-gradient(45deg, var(--dark-purple), var(--primary-purple));
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 10000;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity var(--transition-slow), visibility var(--transition-slow);
         }
-
-        .preloader.hidden {
+        
+        .preloader.hide {
             opacity: 0;
             visibility: hidden;
         }
-
+        
         .preloader-content {
             text-align: center;
         }
-
+        
         .preloader-logo {
             font-family: var(--font-headline);
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 2rem;
-            animation: pulse 2s infinite;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            text-shadow: 0 0 20px rgba(161, 194, 189, 0.5);
+            animation: pulse-glow 2s ease-in-out infinite;
         }
-
-        .preloader-spinner {
-            width: 60px;
-            height: 60px;
-            border: 3px solid var(--light-purple);
-            border-top: 3px solid var(--primary-purple);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+        
+        .preloader-tagline {
+            font-size: 1rem;
+            color: var(--white);
+            opacity: 0.8;
+            margin-top: 10px;
+            animation: fade-in-up 1s ease-out 0.5s both;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        
+        @keyframes pulse-glow {
+            0%, 100% { 
+                text-shadow: 0 0 20px rgba(161, 194, 189, 0.5);
+                transform: scale(1);
+            }
+            50% { 
+                text-shadow: 0 0 30px rgba(161, 194, 189, 0.8);
+                transform: scale(1.05);
+            }
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 0.8;
+                transform: translateY(0);
+            }
         }
-
-        /* ===== NAVIGATION BAR ===== */
+        
+        /* ================================================
+           NAVIGATION BAR
+           ================================================ */
+        
         .navbar {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(106, 13, 173, 0.2);
+            width: 100%;
+            padding: 20px 0;
+            background: rgba(30, 27, 75, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
             z-index: 1000;
-            padding: 1rem 0;
             transform: translateY(-100%);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform var(--transition-medium);
         }
-
-        .navbar.visible {
+        
+        .navbar.show {
             transform: translateY(0);
         }
-
+        
         .nav-container {
-            max-width: 1400px;
+            max-width: var(--container-max-width);
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
-        .nav-logo {
+        
+        .logo {
             font-family: var(--font-headline);
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--white);
+            color: var(--primary-purple);
             text-decoration: none;
-            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            transition: color var(--transition-fast);
         }
-
+        
+        .logo:hover {
+            color: var(--light-purple);
+        }
+        
         .nav-menu {
             display: flex;
             list-style: none;
-            gap: 2rem;
-            margin-left: auto;
+            gap: 40px;
         }
-
-        .nav-item a {
+        
+        .nav-link {
             color: var(--white);
             text-decoration: none;
             font-weight: 500;
-            transition: var(--transition-fast);
             position: relative;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
+            transition: color var(--transition-fast);
         }
-
-        .nav-item a:hover,
-        .nav-item a.active {
+        
+        .nav-link:hover {
             color: var(--primary-purple);
-            background: var(--light-purple);
         }
-
-        /* Mobile menu toggle */
-        .mobile-toggle {
+        
+        .nav-link.active {
+            color: var(--primary-purple);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-purple);
+            transition: width var(--transition-fast);
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
             display: none;
             flex-direction: column;
             cursor: pointer;
             gap: 4px;
         }
-
-        .mobile-toggle span {
+        
+        .menu-toggle span {
             width: 25px;
             height: 3px;
             background: var(--white);
-            transition: var(--transition-fast);
+            transition: all var(--transition-fast);
         }
-
-        /* ===== PAGE CONTAINER ===== */
-        .page {
-            display: none;
-            min-height: 100vh;
+        
+        /* ================================================
+           CONTAINER & LAYOUT UTILITIES
+           ================================================ */
+        
+        .container {
+            max-width: var(--container-max-width);
+            margin: 0 auto;
+            padding: 0 20px;
         }
-
-        .page.active {
-            display: block;
-        }
-
-        /* ===== HERO SECTION ===== */
-        .hero {
+        
+        .section {
+            padding: var(--section-padding);
             position: relative;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            overflow: hidden;
         }
-
-        .hero-video {
+        
+        .section-title {
+            font-family: var(--font-headline);
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(45deg, var(--primary-purple), var(--light-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* ================================================
+           ANIMATED BACKGROUNDS & SHAPES
+           ================================================ */
+        
+        .floating-shapes {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            z-index: -2;
-            opacity: 0.3;
+            pointer-events: none;
+            overflow: hidden;
         }
-
+        
+        .shape {
+            position: absolute;
+            background: rgba(161, 194, 189, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+        
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        /* ================================================
+           HERO SECTION
+           ================================================ */
+        
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            z-index: -2;
+        }
+        
         .hero-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, 
-                rgba(10, 10, 10, 0.8), 
-                rgba(106, 13, 173, 0.3));
+            background: rgba(30, 27, 75, 0.7);
             z-index: -1;
         }
-
+        
         .hero-content {
+            text-align: center;
             max-width: 800px;
-            padding: 0 2rem;
-            z-index: 1;
-            animation: fadeInUp 1.2s ease-out 0.5s both;
+            animation: fade-in-up 1s ease-out 0.5s both;
         }
-
+        
         .hero-title {
             font-family: var(--font-headline);
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            font-weight: 800;
-            margin-bottom: 1.5rem;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
             background: linear-gradient(45deg, var(--white), var(--primary-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            line-height: 1.2;
         }
-
+        
         .hero-subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 2.5rem;
-            color: var(--light-gray);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .cta-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
+            font-size: 1.5rem;
             color: var(--white);
-            padding: 1rem 2.5rem;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, var(--primary-purple), var(--light-purple));
+            color: var(--white);
             text-decoration: none;
-            cursor: pointer;
-            transition: var(--transition-smooth);
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all var(--transition-fast);
             position: relative;
             overflow: hidden;
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(106, 13, 173, 0.4);
+        /* Make hero CTAs text black only for the two buttons in the hero */
+        .hero .cta-button {
+            color: #000000;
         }
-
+        
         .cta-button::before {
             content: '';
             position: absolute;
@@ -287,504 +383,386 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.6s;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left var(--transition-medium);
         }
-
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(161, 194, 189, 0.4);
+        }
+        
         .cta-button:hover::before {
             left: 100%;
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ===== FLOWING BACKGROUND ELEMENTS ===== */
-        .bg-blob {
-            position: absolute;
-            border-radius: 50%;
-            background: var(--light-purple);
-            opacity: 0.1;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .bg-blob:nth-child(1) {
-            width: 300px;
-            height: 300px;
-            top: 20%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .bg-blob:nth-child(2) {
-            width: 200px;
-            height: 200px;
-            top: 60%;
-            right: 15%;
-            animation-delay: 2s;
-        }
-
-        .bg-blob:nth-child(3) {
-            width: 150px;
-            height: 150px;
-            bottom: 20%;
-            left: 20%;
-            animation-delay: 4s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            33% {
-                transform: translateY(-20px) rotate(120deg);
-            }
-            66% {
-                transform: translateY(20px) rotate(240deg);
-            }
-        }
-
-        /* ===== SECTIONS ===== */
-        .section {
-            padding: 6rem 0;
-            position: relative;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .section-title {
-            font-family: var(--font-headline);
-            font-size: clamp(2rem, 4vw, 3.5rem);
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 3rem;
-            background: linear-gradient(45deg, var(--white), var(--primary-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            font-size: 1.2rem;
-            color: var(--light-gray);
-            max-width: 600px;
-            margin: 0 auto 4rem;
-        }
-
-        /* ===== CARDS & GRID LAYOUTS ===== */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
+        
+        /* ================================================
+           CARDS & COMPONENTS
+           ================================================ */
+        
         .card {
-            background: var(--dark-gray);
-            border: 1px solid var(--medium-gray);
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             border-radius: 20px;
-            padding: 2.5rem;
-            text-align: center;
-            transition: var(--transition-smooth);
+            padding: 40px;
+            transition: all var(--transition-fast);
             position: relative;
             overflow: hidden;
         }
-
+        
         .card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(99, 102, 241, 0.05), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
         }
-
-        .card:hover::before {
-            transform: scaleX(1);
-        }
-
+        
         .card:hover {
             transform: translateY(-10px);
             border-color: var(--primary-purple);
-            box-shadow: 0 20px 40px rgba(106, 13, 173, 0.2);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
         }
-
+        
+        .card:hover::before {
+            opacity: 1;
+        }
+        
         .card-icon {
             font-size: 3rem;
             color: var(--primary-purple);
-            margin-bottom: 1.5rem;
-            transition: var(--transition-smooth);
+            margin-bottom: 20px;
         }
-
-        .card:hover .card-icon {
-            transform: scale(1.1);
-        }
-
+        
         .card-title {
             font-family: var(--font-headline);
             font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .card-text {
-            color: var(--light-gray);
-            line-height: 1.6;
-        }
-
-        /* ===== TEAM GRID ===== */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .team-card {
-            background: var(--dark-gray);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            transition: var(--transition-smooth);
-            border: 1px solid var(--medium-gray);
-        }
-
-        .team-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary-purple);
-        }
-
-        .team-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 3rem;
+            margin-bottom: 15px;
             color: var(--white);
         }
-
-        .team-name {
-            font-family: var(--font-headline);
-            font-size: 1.3rem;
+        
+        .card-description {
+            color: var(--white);
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        /* ================================================
+           GRID LAYOUTS
+           ================================================ */
+        
+        .grid {
+            display: grid;
+            gap: 30px;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        }
+        
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+        
+        /* ================================================
+           FORMS
+           ================================================ */
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 10px;
+            color: var(--white);
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-button {
+            background: linear-gradient(45deg, var(--primary-purple), var(--light-purple));
+            color: var(--white);
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
             font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .team-role {
-            color: var(--primary-purple);
-            font-weight: 500;
-            margin-bottom: 1rem;
-        }
-
-        .team-bio {
-            color: var(--light-gray);
-            font-size: 0.9rem;
-        }
-
-        /* ===== ACCORDION FOR SERVICES ===== */
-        .accordion {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .accordion-item {
-            background: var(--dark-gray);
-            border: 1px solid var(--medium-gray);
-            border-radius: 15px;
-            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
             overflow: hidden;
-            transition: var(--transition-smooth);
         }
-
-        .accordion-item:hover {
+        
+        .form-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(161, 194, 189, 0.4);
+        }
+        
+        .form-error {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 20%, 40%, 60%, 80%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        }
+        
+        /* ================================================
+           ACCORDION COMPONENT
+           ================================================ */
+        
+        .accordion {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all var(--transition-fast);
+        }
+        
+        .accordion:hover {
             border-color: var(--primary-purple);
         }
-
+        
         .accordion-header {
-            padding: 1.5rem 2rem;
+            padding: 25px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: var(--transition-fast);
+            transition: background var(--transition-fast);
         }
-
+        
         .accordion-header:hover {
-            background: var(--light-purple);
+            background: rgba(99, 102, 241, 0.1);
         }
-
+        
+        .accordion-title {
+            font-family: var(--font-headline);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+        
         .accordion-icon {
             color: var(--primary-purple);
-            transition: transform 0.3s ease;
+            transition: transform var(--transition-fast);
         }
-
-        .accordion-item.active .accordion-icon {
+        
+        .accordion.active .accordion-icon {
             transform: rotate(180deg);
         }
-
+        
         .accordion-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s ease;
+            transition: max-height var(--transition-medium);
         }
-
-        .accordion-item.active .accordion-content {
+        
+        .accordion.active .accordion-content {
             max-height: 200px;
         }
-
+        
         .accordion-body {
-            padding: 0 2rem 1.5rem;
-            color: var(--light-gray);
-        }
-
-        /* ===== CONTACT FORM ===== */
-        .contact-form {
-            background: var(--dark-gray);
-            border: 1px solid var(--medium-gray);
-            border-radius: 20px;
-            padding: 3rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .form-group {
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .form-input,
-        .form-textarea {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            background: var(--black);
-            border: 2px solid var(--medium-gray);
-            border-radius: 12px;
+            padding: 0 25px 25px;
             color: var(--white);
-            font-size: 1rem;
-            transition: var(--transition-smooth);
+            opacity: 0.8;
+            line-height: 1.6;
         }
-
-        .form-input:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary-purple);
-            box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
-        }
-
-        .form-label {
-            position: absolute;
-            top: 1rem;
-            left: 1.5rem;
-            color: var(--light-gray);
-            font-size: 1rem;
-            transition: var(--transition-smooth);
-            pointer-events: none;
-        }
-
-        .form-input:focus + .form-label,
-        .form-input:not(:placeholder-shown) + .form-label,
-        .form-textarea:focus + .form-label,
-        .form-textarea:not(:placeholder-shown) + .form-label {
-            top: -0.7rem;
-            left: 1rem;
-            font-size: 0.8rem;
-            color: var(--primary-purple);
-            background: var(--dark-gray);
-            padding: 0 0.5rem;
-        }
-
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
-            color: var(--white);
-            border: none;
-            padding: 1rem;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(106, 13, 173, 0.3);
-        }
-
-        /* ===== CONTACT INFO ===== */
-        .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .contact-item {
+        
+        /* ================================================
+           TEAM MEMBER CARDS
+           ================================================ */
+        
+        .team-card {
             text-align: center;
-            padding: 2rem;
-            background: var(--dark-gray);
-            border-radius: 15px;
-            border: 1px solid var(--medium-gray);
-            transition: var(--transition-smooth);
+            background: rgba(30, 41, 59, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all var(--transition-fast);
         }
-
-        .contact-item:hover {
-            border-color: var(--primary-purple);
-            transform: translateY(-5px);
+        
+        .team-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-green);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
         }
-
-        .contact-item i {
-            font-size: 2.5rem;
-            color: var(--primary-purple);
-            margin-bottom: 1rem;
+        
+        .team-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 3px solid var(--accent-green);
+            object-fit: cover;
         }
-
-        .contact-item h3 {
+        
+        .team-name {
             font-family: var(--font-headline);
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--light-mint);
+            margin-bottom: 10px;
         }
-
-        .contact-item p {
-            color: var(--light-gray);
+        
+        .team-role {
+            color: var(--accent-green);
+            font-weight: 500;
+            margin-bottom: 15px;
         }
-
-        /* ===== BLOG CARDS ===== */
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
+        
+        .team-bio {
+            color: var(--light-mint);
+            opacity: 0.8;
+            line-height: 1.6;
         }
-
+        
+        /* ================================================
+           BLOG CARDS
+           ================================================ */
+        
         .blog-card {
-            background: var(--dark-gray);
-            border: 1px solid var(--medium-gray);
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             border-radius: 20px;
             overflow: hidden;
-            transition: var(--transition-smooth);
+            transition: all var(--transition-fast);
         }
-
+        
         .blog-card:hover {
             transform: translateY(-10px);
             border-color: var(--primary-purple);
-            box-shadow: 0 20px 40px rgba(106, 13, 173, 0.2);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
         }
-
+        
         .blog-image {
             width: 100%;
             height: 200px;
-            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-size: 3rem;
+            object-fit: cover;
         }
-
+        
         .blog-content {
-            padding: 2rem;
+            padding: 25px;
         }
-
+        
+        .blog-title {
+            font-family: var(--font-headline);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+        
+        .blog-excerpt {
+            color: var(--white);
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
         .blog-date {
             color: var(--primary-purple);
             font-size: 0.9rem;
             font-weight: 500;
         }
-
-        .blog-title {
-            font-family: var(--font-headline);
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin: 0.5rem 0 1rem;
-        }
-
-        .blog-excerpt {
-            color: var(--light-gray);
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        .read-more {
-            color: var(--primary-purple);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition-fast);
-        }
-
-        .read-more:hover {
-            color: var(--secondary-purple);
-        }
-
-        /* ===== FOOTER ===== */
+        
+        /* ================================================
+           FOOTER
+           ================================================ */
+        
         .footer {
             background: var(--dark-gray);
-            border-top: 1px solid var(--medium-gray);
-            padding: 3rem 0 1rem;
-            margin-top: 4rem;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 60px 0 30px;
+            margin-top: 80px;
         }
-
+        
         .footer-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
+            gap: 40px;
+            margin-bottom: 40px;
         }
-
+        
         .footer-section h3 {
             font-family: var(--font-headline);
-            font-size: 1.2rem;
-            color: var(--primary-purple);
-            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 20px;
         }
-
+        
         .footer-section p,
         .footer-section a {
-            color: var(--light-gray);
+            color: var(--white);
+            opacity: 0.8;
             text-decoration: none;
-            line-height: 1.6;
-            transition: var(--transition-fast);
+            line-height: 1.8;
         }
-
+        
         .footer-section a:hover {
             color: var(--primary-purple);
+            opacity: 1;
         }
-
+        
         .footer-bottom {
             text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid var(--medium-gray);
-            color: var(--light-gray);
-            font-size: 0.9rem;
+            padding-top: 30px;
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            color: var(--white);
+            opacity: 0.6;
         }
-
-        /* ===== RESPONSIVE DESIGN ===== */
+        
+        /* ================================================
+           PAGE CONTENT CONTAINERS
+           ================================================ */
+        
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* ================================================
+           RESPONSIVE DESIGN
+           ================================================ */
+        
         @media (max-width: 768px) {
             .nav-menu {
                 display: none;
             }
             
-            .mobile-toggle {
+            .menu-toggle {
                 display: flex;
             }
             
@@ -792,46 +770,403 @@
                 font-size: 2.5rem;
             }
             
-            .section {
-                padding: 4rem 0;
+            .hero-subtitle {
+                font-size: 1.2rem;
             }
             
-            .container {
-                padding: 0 1rem;
+            .section-title {
+                font-size: 2rem;
             }
             
-            .cards-grid {
+            .grid-2,
+            .grid-3,
+            .grid-4 {
                 grid-template-columns: 1fr;
             }
             
-            .contact-form {
-                padding: 2rem;
+            .card {
+                padding: 25px;
             }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+        }
+        
+        /* ================================================
+           UTILITY CLASSES
+           ================================================ */
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+        
+        .mb-40 {
+            margin-bottom: 40px;
+        }
+        
+        .fade-in {
+            animation: fade-in-up 1s ease-out both;
+        }
+        
+        .fade-in-delay {
+            animation: fade-in-up 1s ease-out 0.3s both;
+        }
+
+        /* ================================================
+           CHAT WIDGET
+           ================================================ */
+        .chat-launcher {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-purple), var(--light-purple));
+            color: var(--dark-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(161, 194, 189, 0.4);
+            cursor: pointer;
+            z-index: 1100;
+        }
+
+        .chat-panel {
+            position: fixed;
+            right: 20px;
+            bottom: 90px;
+            width: 320px;
+            max-height: 60vh;
+            background: rgba(30, 41, 59, 0.98);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+            display: none;
+            z-index: 1100;
+        }
+
+        .chat-header {
+            padding: 12px 16px;
+            background: rgba(30, 41, 59, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-body {
+            padding: 16px;
+            height: 280px;
+            overflow-y: auto;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+            background: rgba(30, 41, 59, 0.98);
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            color: var(--white);
+            padding: 10px 14px;
+        }
+
+        .chat-input button {
+            background: linear-gradient(45deg, var(--primary-purple), var(--light-purple));
+            color: var(--dark-purple);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            cursor: pointer;
         }
     </style>
 </head>
-
 <body>
-    <!-- ===== PRELOADER ===== -->
+    <!-- ================================================
+         PRELOADER
+         ================================================ -->
     <div class="preloader" id="preloader">
         <div class="preloader-content">
-            <div class="preloader-logo">Kanniganti & Co.</div>
-            <div class="preloader-spinner"></div>
+            <div class="preloader-logo">Pharos</div>
+            <div class="preloader-tagline">Your Gateway to Global Education</div>
         </div>
     </div>
 
-    <!-- ===== NAVIGATION BAR ===== -->
+    <!-- ================================================
+         RESOURCES PAGE
+         ================================================ -->
+    <div id="resources" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Resources</h2>
+
+                <div class="services-container" style="margin-bottom: 40px;">
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-flag-usa"></i> USA Guide</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                F-1 overview, I-20 issuance, SEVIS fee, DS-160, interview tips. Maintaining status (full-time enrollment), on-campus work limits, CPT/OPT steps and timelines.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-flag"></i> UK Guide</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Student Route requirements, CAS letters, maintenance funds, healthcare surcharge (IHS), BRP collection. Graduate Route eligibility, durations, and switching to Skilled Worker.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-flag"></i> Canada Guide</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Study Permit steps, biometrics, SDS vs non-SDS, co-op work permits, PGWP length by program duration, and PR streams (CEC/PNP).
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-flag"></i> Australia Guide</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Subclass 500, Genuine Student (GS) criteria, OSHC insurance, work limits, Temporary Graduate (485) streams and durations.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-globe-europe"></i> Europe Guide</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Schengen overview, national student visa differences (Germany, France, Netherlands), residence permits and work while studying.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 60px;" class="grid grid-2">
+                    <div class="card">
+                        <h3 class="card-title">FAQs</h3>
+                        <div class="services-container">
+                            <div class="accordion">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    <h4 class="accordion-title">How early should I apply for a student visa?</h4>
+                                    <i class="fas fa-chevron-down accordion-icon"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-body">Start 4–6 months before your program start date; embassy/consulate wait times vary.</div>
+                                </div>
+                            </div>
+                            <div class="accordion">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    <h4 class="accordion-title">Can I work while studying?</h4>
+                                    <i class="fas fa-chevron-down accordion-icon"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="accordion-body">Most destinations allow limited part-time work with conditions (hours caps, term-time rules); check your visa rules.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Blog / Updates</h3>
+                        <p class="card-description">Latest immigration and education law updates in our Insights.</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 60px;" class="grid grid-2">
+                    <div class="card">
+                        <h3 class="card-title">Downloadable Templates</h3>
+                        <ul class="card-description" style="list-style: disc; margin-left: 20px;">
+                            <li>Financial sponsorship letter (sample)</li>
+                            <li>Pre-departure compliance checklist</li>
+                            <li>Accommodation agreement review checklist</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Glossary of Legal Terms</h3>
+                        <ul class="card-description" style="list-style: disc; margin-left: 20px;">
+                            <li>CAS (UK): Confirmation of Acceptance for Studies</li>
+                            <li>SEVIS (US): Student and Exchange Visitor Information System</li>
+                            <li>PGWP (CA): Post-Graduation Work Permit</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ================================================
+         TOOLS PAGE
+         ================================================ -->
+    <div id="tools" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Tools</h2>
+
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3 class="card-title">Consultation Booking</h3>
+                        <p class="card-description">Schedule a session with our legal team.</p>
+                        <form class="contact-form" onsubmit="submitBookingEmail(event)">
+                            <div class="form-group"><input class="form-input" placeholder="Full Name" required/></div>
+                            <div class="form-group"><input type="email" class="form-input" placeholder="Email" required/></div>
+                            <div class="form-group"><input class="form-input" placeholder="Preferred Date" onfocus="this.type='date'" required/></div>
+                            <div class="form-group"><input class="form-input" placeholder="Preferred Time" onfocus="this.type='time'" required/></div>
+                            <div class="form-group"><select class="form-input" required>
+                                <option value="">Select Topic</option>
+                                <option>Student Visa Guidance</option>
+                                <option>Work Authorization</option>
+                                <option>Scholarship Agreements</option>
+                                <option>Other</option>
+                            </select></div>
+                            <button class="form-button" type="submit">Book Now</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Live Chat / Chatbot</h3>
+                        <p class="card-description">Instant answers for quick queries (placeholder).</p>
+                        <a href="#" class="cta-button" onclick="alert('Live chat placeholder')">Open Chat</a>
+                    </div>
+                </div>
+
+                <div style="margin-top: 60px;" class="grid grid-2">
+                    <div class="card">
+                        <h3 class="card-title">Cost Calculator</h3>
+                        <p class="card-description">Estimate visa and legal costs.</p>
+                        <div class="form-group"><select id="calcCountry" class="form-input">
+                            <option value="USA">USA</option>
+                            <option value="UK">UK</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Europe">Europe</option>
+                        </select></div>
+                        <div class="form-group"><input id="calcDuration" class="form-input" type="number" min="1" placeholder="Program Duration (months)"/></div>
+                        <button class="form-button" onclick="calculateCost()">Calculate</button>
+                        <p id="calcResult" class="card-description" style="margin-top: 12px;"></p>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Step-by-Step Timeline</h3>
+                        <p class="card-description">Your journey at a glance.</p>
+                        <ul class="card-description" style="list-style: disc; margin-left: 20px;">
+                            <li>University selection & admissions</li>
+                            <li>Visa preparation & submission</li>
+                            <li>Pre-departure compliance</li>
+                            <li>Arrival & orientation</li>
+                            <li>Work authorization & post-study options</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ================================================
+         STUDENT SUPPORT PAGE
+         ================================================ -->
+    <div id="support" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Student Support</h2>
+
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3 class="card-title">Success Stories / Testimonials</h3>
+                        <div class="card-description">
+                            <p>"Pharos made my student journey seamless!" – A satisfied student</p>
+                            <p>“The team clarified my OPT options and reviewed my contract quickly.” – Computer Science graduate</p>
+                            <p>“Their pre-departure checklist saved me from documentation delays.” – MBA admit</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Emergency Helpline</h3>
+                        <p class="card-description"><strong>24/7:</strong> +1 (555) 123-4567</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 60px;" class="card">
+                    <h3 class="card-title">Newsletter Signup</h3>
+                    <div class="form-group"><input class="form-input" placeholder="Your Email"/></div>
+                    <button class="form-button" onclick="alert('Thanks for subscribing!')">Subscribe</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ================================================
+         LEGAL PAGE
+         ================================================ -->
+    <div id="legal" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Legal</h2>
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3 class="card-title">Privacy & Data Protection Policy</h3>
+                        <p class="card-description">Placeholder for privacy practices, data handling, and user rights.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Terms of Service</h3>
+                        <p class="card-description">Placeholder for service terms, disclaimers, and acceptable use.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- ================================================
+         NAVIGATION BAR
+         ================================================ -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="#" class="nav-logo">Kanniganti & Co.</a>
+            <a href="#" class="logo" onclick="showPage('home')">Pharos</a>
             <ul class="nav-menu">
-                <li class="nav-item"><a href="#" class="nav-link active" data-page="home">Home</a></li>
-                <li class="nav-item"><a href="#" class="nav-link" data-page="about">About Us</a></li>
-                <li class="nav-item"><a href="#" class="nav-link" data-page="services">Practice Areas</a></li>
-                <li class="nav-item"><a href="#" class="nav-link" data-page="contact">Contact</a></li>
-                <li class="nav-item"><a href="#" class="nav-link" data-page="blog">Insights</a></li>
+                <li><a href="#" class="nav-link active" onclick="showPage('home')">Home</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('about')">About Us</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('services')">Services</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('contact')">Contact</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('blog')">Insights</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('resources')">Resources</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('tools')">Tools</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('support')">Support</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('legal')">Legal</a></li>
             </ul>
-            <div class="mobile-toggle">
+            <div class="menu-toggle" id="menuToggle">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -839,226 +1174,423 @@
         </div>
     </nav>
 
-    <!-- ===== HOME PAGE ===== -->
-    <div class="page active" id="home-page">
+    <!-- ================================================
+         HOME PAGE
+         ================================================ -->
+    <div id="home" class="page active">
+        <!-- Hero Section -->
         <section class="hero">
-            <!-- Video background placeholder - using a CSS animation instead for demo -->
-            <div class="hero-video" style="background: linear-gradient(45deg, #1a1a1a, #2a1a3a); position: absolute; top: 0; left: 0; width: 100%; height: 100%; animation: wave 8s ease-in-out infinite;"></div>
+            <!-- Placeholder for video background - using CSS animation instead -->
+            <div class="hero-video-placeholder" style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, #6366F1, #8B5CF6, #1E1B4B);
+                background-size: 400% 400%;
+                animation: gradient-shift 8s ease infinite;
+                z-index: -2;
+            "></div>
             <div class="hero-overlay"></div>
             
-            <!-- Floating background elements -->
-            <div class="bg-blob"></div>
-            <div class="bg-blob"></div>
-            <div class="bg-blob"></div>
+            <div class="floating-shapes">
+                <div class="shape"></div>
+                <div class="shape"></div>
+                <div class="shape"></div>
+            </div>
             
             <div class="hero-content">
-                <h1 class="hero-title">Legal Excellence Redefined</h1>
-                <p class="hero-subtitle">Innovative legal solutions with a modern approach. We combine cutting-edge technology with traditional legal expertise to deliver exceptional results for our clients.</p>
-                <a href="#" class="cta-button" data-page="contact">
-                    Get Started Today
-                    <i class="fas fa-arrow-right"></i>
-                </a>
+                <h1 class="hero-title">Your Bridge to Global Education</h1>
+                <p class="hero-subtitle">Expert legal guidance for students pursuing higher education and career opportunities abroad</p>
+                <a href="#" class="cta-button" onclick="showPage('contact')">Get Started Today</a>
+                <div style="margin-top: 20px;">
+                    <a href="#" class="cta-button" onclick="showPage('tools')">Quick Consultation</a>
+                </div>
             </div>
         </section>
 
         <!-- Values Section -->
         <section class="section">
             <div class="container">
-                <h2 class="section-title">Why Choose Kanniganti & Co.</h2>
-                <p class="section-subtitle">We deliver exceptional legal services with a focus on innovation, integrity, and results.</p>
-                
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-icon"><i class="fas fa-lightbulb"></i></div>
-                        <h3 class="card-title">Innovative Approach</h3>
-                        <p class="card-text">We leverage cutting-edge technology and modern methodologies to provide efficient, effective legal solutions for the digital age.</p>
+                <h2 class="section-title">Why Choose Us</h2>
+                <div class="grid grid-3">
+                    <div class="card fade-in">
+                        <i class="fas fa-globe-americas card-icon"></i>
+                        <h3 class="card-title">Global Expertise</h3>
+                        <p class="card-description">Comprehensive knowledge of international education laws and visa requirements across multiple countries.</p>
                     </div>
-                    
-                    <div class="card">
-                        <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
-                        <h3 class="card-title">Proven Results</h3>
-                        <p class="card-text">With over 500 successful cases and a 95% client satisfaction rate, we have a track record of delivering exceptional outcomes.</p>
+                    <div class="card fade-in-delay">
+                        <i class="fas fa-graduation-cap card-icon"></i>
+                        <h3 class="card-title">Student-Focused</h3>
+                        <p class="card-description">Specialized legal services tailored specifically for students and their unique educational journey needs.</p>
                     </div>
-                    
-                    <div class="card">
-                        <div class="card-icon"><i class="fas fa-users"></i></div>
-                        <h3 class="card-title">Client-Focused</h3>
-                        <p class="card-text">Your success is our priority. We provide personalized attention and tailored strategies for each unique legal challenge.</p>
+                    <div class="card fade-in">
+                        <i class="fas fa-shield-alt card-icon"></i>
+                        <h3 class="card-title">Trusted Support</h3>
+                        <p class="card-description">Reliable legal guidance from consultation to graduation, ensuring your educational dreams become reality.</p>
                     </div>
-                    
+                </div>
+            </div>
+        </section>
+
+        <!-- Highlights of Key Services -->
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Highlights of Key Services</h2>
+                <div class="grid grid-3">
                     <div class="card">
-                        <div class="card-icon"><i class="fas fa-clock"></i></div>
-                        <h3 class="card-title">24/7 Availability</h3>
-                        <p class="card-text">Legal issues don't follow business hours. Our team is available around the clock to address your urgent legal needs.</p>
+                        <i class="fas fa-passport card-icon"></i>
+                        <h3 class="card-title">Student Visa Guidance</h3>
+                        <p class="card-description">End-to-end support for student visa applications and interviews.</p>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-check-circle card-icon"></i>
+                        <h3 class="card-title">Pre-Departure Compliance</h3>
+                        <p class="card-description">Legal checklist to ensure full compliance before you travel.</p>
+                    </div>
+                    <div class="card">
+                        <i class="fas fa-briefcase card-icon"></i>
+                        <h3 class="card-title">Work Visa & Contracts</h3>
+                        <p class="card-description">Review of work visas, OPT/CPT, and employment contracts.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section class="section">
+            <div class="container">
+                <div class="grid grid-4">
+                    <div class="card text-center">
+                        <h3 class="card-title" style="color: var(--primary-purple); font-size: 3rem;">500+</h3>
+                        <p class="card-description">Students Assisted</p>
+                    </div>
+                    <div class="card text-center">
+                        <h3 class="card-title" style="color: var(--primary-purple); font-size: 3rem;">25+</h3>
+                        <p class="card-description">Countries Covered</p>
+                    </div>
+                    <div class="card text-center">
+                        <h3 class="card-title" style="color: var(--primary-purple); font-size: 3rem;">98%</h3>
+                        <p class="card-description">Success Rate</p>
+                    </div>
+                    <div class="card text-center">
+                        <h3 class="card-title" style="color: var(--primary-purple); font-size: 3rem;">5+</h3>
+                        <p class="card-description">Years Experience</p>
                     </div>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- ===== ABOUT US PAGE ===== -->
-    <div class="page" id="about-page">
-        <section class="section" style="padding-top: 8rem;">
+    <!-- ================================================
+         ABOUT US PAGE
+         ================================================ -->
+    <div id="about" class="page">
+        <section class="section">
             <div class="container">
-                <h2 class="section-title">About Kanniganti & Co.</h2>
-                <p class="section-subtitle">A modern law firm built on traditional values of integrity, excellence, and client service.</p>
+                <h2 class="section-title">About Pharos</h2>
                 
-                <div style="max-width: 800px; margin: 0 auto 4rem; text-align: center;">
-                    <p style="font-size: 1.1rem; color: var(--light-gray); line-height: 1.8; margin-bottom: 2rem;">
-                        Founded in 2010, Kanniganti & Co. has grown from a small practice to one of the region's most respected law firms. Our team of experienced attorneys combines deep legal expertise with innovative approaches to deliver exceptional results for our clients.
-                    </p>
-                    <p style="font-size: 1.1rem; color: var(--light-gray); line-height: 1.8;">
-                        We believe that legal services should be accessible, transparent, and tailored to meet the unique needs of each client. Our commitment to excellence and innovation has earned us recognition as leaders in the legal community.
-                    </p>
+                <!-- Company Overview -->
+                <div class="grid grid-2 mb-40">
+                    <div class="card">
+                        <h3 class="card-title">Our Mission</h3>
+                        <p class="card-description">
+                            At Pharos, we are dedicated to empowering students with the legal expertise they need to pursue their educational dreams abroad. Our mission is to bridge the gap between ambition and opportunity by providing comprehensive legal guidance throughout the international education journey.
+                        </p>
+                        <p class="card-description" style="margin-top: 15px;">
+                            We understand that studying abroad involves complex legal processes, from visa applications to compliance with international education laws. Our team of experienced legal professionals specializes in navigating these challenges, ensuring our clients can focus on their academic goals while we handle the legal complexities.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Our Story</h3>
+                        <p class="card-description">
+                            Founded in 2019 by a team of international education law specialists, Pharos emerged from a simple observation: too many talented students were being held back by legal barriers rather than academic ones. Our founders, having personally experienced the challenges of international education, decided to create a firm that would make global education accessible to all deserving students.
+                        </p>
+                        <p class="card-description" style="margin-top: 15px;">
+                            Today, we are proud to have helped over 500 students successfully navigate their journey to international education, with a 98% success rate in visa approvals and legal compliance matters.
+                        </p>
+                    </div>
                 </div>
 
-                <h3 class="section-title" style="font-size: 2rem; margin-bottom: 2rem;">Our Team</h3>
-                
-                <div class="team-grid">
+                <!-- Team Section -->
+                <h3 class="section-title" style="font-size: 2.5rem; margin-bottom: 40px;">Meet Our Team</h3>
+                <div class="grid grid-3">
                     <div class="team-card">
-                        <div class="team-avatar">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
                         <h4 class="team-name">Jeevan Kanniganti</h4>
-                        <p class="team-role">Named Partner</p>
-                        <p class="team-bio">With over 20 years of experience in corporate law, Jeevan leads our firm with vision and expertise in complex business transactions.</p>
+                        <p class="team-role">25U0601023</p>
                     </div>
-                    
                     <div class="team-card">
-                        <div class="team-avatar">
-                            <i class="fas fa-female"></i>
-                        </div>
                         <h4 class="team-name">Izel Hannah Inja</h4>
-                        <p class="team-role">Senior Partner</p>
-                        <p class="team-bio">A litigation specialist with a passion for justice, Izel has successfully represented clients in high-profile civil and criminal cases.</p>
+                        <p class="team-role">25WU0601020</p>
                     </div>
-                    
                     <div class="team-card">
-                        <div class="team-avatar">
-                            <i class="fas fa-male"></i>
-                        </div>
                         <h4 class="team-name">Jia Jain</h4>
-                        <p class="team-role">Senior Partner</p>
-                        <p class="team-bio">Jia specializes in intellectual property law and has helped numerous startups and established companies protect their innovations.</p>
+                        <p class="team-role">25WU0601021</p>
                     </div>
-                    
                     <div class="team-card">
-                        <div class="team-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h4 class="team-name">Girish Aradhya</h4>
-                        <p class="team-role">Senior Advocate</p>
-                        <p class="team-bio">Girish brings extensive experience in civil litigation and has successfully handled complex legal matters for our clients.</p>
+                        <h4 class="team-name">Girish Aradhya C</h4>
+                        <p class="team-role">25WU0601018</p>
                     </div>
-                    
                     <div class="team-card">
-                        <div class="team-avatar">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
                         <h4 class="team-name">Ganga Mohith</h4>
-                        <p class="team-role">Senior Advocate</p>
-                        <p class="team-bio">Ganga specializes in commercial law and provides strategic legal counsel to businesses of all sizes.</p>
+                        <p class="team-role">25WU0601017</p>
                     </div>
-                    
                     <div class="team-card">
-                        <div class="team-avatar">
-                            <i class="fas fa-female"></i>
-                        </div>
                         <h4 class="team-name">Hrushitha Vandanapu</h4>
-                        <p class="team-role">Family Law Attorney</p>
-                        <p class="team-bio">Hrushitha brings compassion and expertise to family law matters, helping clients navigate difficult personal legal challenges.</p>
+                        <p class="team-role">25WU0601019</p>
                     </div>
-                    
                     <div class="team-card">
-                        <div class="team-avatar">
-                            <i class="fas fa-handshake"></i>
-                        </div>
                         <h4 class="team-name">Charan Chittipeddi</h4>
-                        <p class="team-role">M & A Attorney</p>
-                        <p class="team-bio">Charan specializes in mergers and acquisitions, providing expert guidance on complex corporate transactions and deal structuring.</p>
+                        <p class="team-role">25WU0601016</p>
+                    </div>
+                </div>
+
+                <!-- Firm Profile -->
+                <div style="margin-top: 80px;">
+                    <h3 class="section-title" style="font-size: 2.5rem; margin-bottom: 20px;">Firm Profile</h3>
+                    <div class="card">
+                        <p class="card-description">Pharos is a boutique firm dedicated to international education law, supporting students with visas, compliance, and post-study pathways across the USA, UK, Canada, Australia, and Europe.</p>
+                    </div>
+                </div>
+
+                <!-- Vision & Mission -->
+                <div style="margin-top: 60px;">
+                    <h3 class="section-title" style="font-size: 2.5rem; margin-bottom: 20px;">Vision & Mission</h3>
+                    <div class="grid grid-2">
+                        <div class="card">
+                            <h4 class="card-title">Vision</h4>
+                            <p class="card-description">To make global education legally accessible, safe, and empowering for every student.</p>
+                        </div>
+                        <div class="card">
+                            <h4 class="card-title">Mission</h4>
+                            <p class="card-description">To deliver precise, student-first legal guidance from admission to graduation and beyond.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certifications & Partnerships -->
+                <div style="margin-top: 60px;">
+                    <h3 class="section-title" style="font-size: 2.5rem; margin-bottom: 20px;">Certifications & Partnerships</h3>
+                    <div class="grid grid-3">
+                        <div class="card">
+                            <h4 class="card-title">Certifications & Registrations</h4>
+                            <p class="card-description">Registered legal practice with relevant bar associations and data protection compliance.</p>
+                        </div>
+                        <div class="card">
+                            <h4 class="card-title">University Partnerships</h4>
+                            <p class="card-description">Collaboration with universities and education consultants for streamlined admissions.</p>
+                        </div>
+                        <div class="card">
+                            <h4 class="card-title">Global Networks</h4>
+                            <p class="card-description">Partner attorneys across jurisdictions for localized support.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Values Section -->
+                <div style="margin-top: 80px;">
+                    <h3 class="section-title" style="font-size: 2.5rem; margin-bottom: 40px;">Our Values</h3>
+                    <div class="grid grid-2">
+                        <div class="card">
+                            <i class="fas fa-handshake card-icon"></i>
+                            <h4 class="card-title">Integrity</h4>
+                            <p class="card-description">We maintain the highest ethical standards in all our legal practices, ensuring transparency and honesty in every client interaction.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-lightbulb card-icon"></i>
+                            <h4 class="card-title">Innovation</h4>
+                            <p class="card-description">We stay ahead of changing international education laws and leverage technology to provide efficient, modern legal solutions.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-heart card-icon"></i>
+                            <h4 class="card-title">Compassion</h4>
+                            <p class="card-description">We understand that pursuing education abroad is a deeply personal journey, and we provide empathetic support throughout the process.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-trophy card-icon"></i>
+                            <h4 class="card-title">Excellence</h4>
+                            <p class="card-description">We strive for excellence in every case, continuously improving our services to exceed client expectations.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- ===== PRACTICE AREAS PAGE ===== -->
-    <div class="page" id="services-page">
-        <section class="section" style="padding-top: 8rem;">
+    <!-- ================================================
+         SERVICES PAGE
+         ================================================ -->
+    <div id="services" class="page">
+        <section class="section">
             <div class="container">
-                <h2 class="section-title">Practice Areas</h2>
-                <p class="section-subtitle">Comprehensive legal services tailored to meet your unique needs across multiple practice areas.</p>
+                <h2 class="section-title">Our Practice Areas</h2>
                 
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <span><i class="fas fa-building" style="margin-right: 1rem; color: var(--primary-purple);"></i>Corporate Law</span>
+                <!-- Services Accordion -->
+                <div class="services-container">
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-passport"></i> Student Visa Applications</h3>
                             <i class="fas fa-chevron-down accordion-icon"></i>
                         </div>
                         <div class="accordion-content">
                             <div class="accordion-body">
-                                <p>Comprehensive corporate legal services including mergers & acquisitions, corporate governance, securities law, and business formation. We help businesses navigate complex regulatory environments and strategic transactions.</p>
+                                Comprehensive assistance with student visa applications for all major study destinations including USA (F-1), Canada (Study Permit), UK (Tier 4/Student), Australia (Student 500), and more. We handle document preparation, application submission, and interview coaching.
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <span><i class="fas fa-gavel" style="margin-right: 1rem; color: var(--primary-purple);"></i>Litigation</span>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-university"></i> University Application Support</h3>
                             <i class="fas fa-chevron-down accordion-icon"></i>
                         </div>
                         <div class="accordion-content">
                             <div class="accordion-body">
-                                <p>Expert representation in civil and commercial litigation, including contract disputes, employment law, personal injury claims, and appellate matters. Our trial attorneys have a proven track record in courtroom advocacy.</p>
+                                Legal review of university applications, scholarship applications, and admission contracts. We ensure all documentation meets legal requirements and protect your interests throughout the admission process.
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <span><i class="fas fa-lightbulb" style="margin-right: 1rem; color: var(--primary-purple);"></i>Intellectual Property</span>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-briefcase"></i> Work Authorization & OPT</h3>
                             <i class="fas fa-chevron-down accordion-icon"></i>
                         </div>
                         <div class="accordion-content">
                             <div class="accordion-body">
-                                <p>Complete IP protection services including patent prosecution, trademark registration, copyright matters, and IP litigation. We help innovators and businesses protect their valuable intellectual assets.</p>
+                                Guidance on work authorization options including Optional Practical Training (OPT), Curricular Practical Training (CPT), and post-graduation work permits. We help you understand your rights and maximize your career opportunities.
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <span><i class="fas fa-home" style="margin-right: 1rem; color: var(--primary-purple);"></i>Real Estate</span>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-home"></i> Housing & Accommodation Law</h3>
                             <i class="fas fa-chevron-down accordion-icon"></i>
                         </div>
                         <div class="accordion-content">
                             <div class="accordion-body">
-                                <p>Full-service real estate law including residential and commercial transactions, development projects, zoning issues, and real estate litigation. We ensure smooth property transactions and resolve disputes efficiently.</p>
+                                Legal assistance with rental agreements, housing contracts, and tenant rights in your study destination. We review lease agreements and help resolve housing disputes to ensure safe and legal accommodation.
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <span><i class="fas fa-heart" style="margin-right: 1rem; color: var(--primary-purple);"></i>Family Law</span>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-family"></i> Family & Dependent Visas</h3>
                             <i class="fas fa-chevron-down accordion-icon"></i>
                         </div>
                         <div class="accordion-content">
                             <div class="accordion-body">
-                                <p>Compassionate family law services including divorce, child custody, adoption, and domestic relations matters. We provide sensitive yet effective representation during life's most challenging transitions.</p>
+                                Support for bringing family members including spouses and children on dependent visas. We handle the complex requirements and documentation needed for family reunification during your studies.
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="accordion-item">
-                        <div class="accordion-header">
-                            <span><i class="fas fa-shield-alt" style="margin-right: 1rem; color: var(--primary-purple);"></i>Criminal Defense</span>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-graduation-cap"></i> Post-Graduation Immigration</h3>
                             <i class="fas fa-chevron-down accordion-icon"></i>
                         </div>
                         <div class="accordion-content">
                             <div class="accordion-body">
-                                <p>Aggressive criminal defense representation for white-collar crimes, DUI, drug offenses, and all criminal matters. We protect your rights and fight for the best possible outcome in your case.</p>
+                                Strategic planning for permanent residency and long-term immigration options after graduation. We help you transition from student status to professional work authorization and eventual permanent residence.
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-list-check"></i> Pre-Departure Legal Compliance Checklist</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Document verification, insurance requirements, housing legality, financial compliance, and travel documentation checks prior to departure.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-file-contract"></i> Work Visa & Employment Contract Review</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Comprehensive review of work visas, employer obligations, non-compete clauses, and statutory protections to safeguard your rights.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-hand-holding-usd"></i> Scholarship & Funding Agreement Assistance</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Legal review of scholarship and funding terms, clawback clauses, and sponsor obligations to ensure fairness and compliance.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-briefcase-medical"></i> Post-Study Work Opportunities Advice</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Counseling on post-study work options such as OPT, Graduate Route (UK), PGWP (Canada), and regional alternatives.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-comments"></i> Grievance Redressal for Students Abroad</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Assistance with university disputes, housing issues, discrimination complaints, and escalation pathways.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 class="accordion-title"><i class="fas fa-stamp"></i> Notarisation, Attestation & Document Verification</h3>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                Support for notarisation, apostille, university transcripts, and third-party verifications recognized internationally.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Features -->
+                <div style="margin-top: 80px;">
+                    <h3 class="section-title" style="font-size: 2.5rem; margin-bottom: 40px;">Service Features</h3>
+                    <div class="grid grid-3">
+                        <div class="card">
+                            <i class="fas fa-clock card-icon"></i>
+                            <h4 class="card-title">24/7 Support</h4>
+                            <p class="card-description">Round-the-clock assistance for urgent legal matters and time-sensitive applications across different time zones.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-language card-icon"></i>
+                            <h4 class="card-title">Multilingual Service</h4>
+                            <p class="card-description">Legal services available in multiple languages to ensure clear communication and understanding throughout the process.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fas fa-mobile-alt card-icon"></i>
+                            <h4 class="card-title">Digital Platform</h4>
+                            <p class="card-description">Secure online portal for document sharing, case tracking, and real-time updates on your application status.</p>
                         </div>
                     </div>
                 </div>
@@ -1066,523 +1598,564 @@
         </section>
     </div>
 
-    <!-- ===== CONTACT PAGE ===== -->
-    <div class="page" id="contact-page">
-        <section class="section" style="padding-top: 8rem;">
+    <!-- ================================================
+         CONTACT PAGE
+         ================================================ -->
+    <div id="contact" class="page">
+        <section class="section">
             <div class="container">
-                <h2 class="section-title">Contact Us</h2>
-                <p class="section-subtitle">Ready to discuss your legal needs? Get in touch with our experienced team today.</p>
+                <h2 class="section-title">Get In Touch</h2>
                 
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <h3>Office Location</h3>
-                        <p>123 Legal Plaza<br>Downtown District<br>Metropolitan City, MC 12345</p>
+                <div class="grid grid-2">
+                    <!-- Contact Form -->
+                    <div class="card">
+                        <h3 class="card-title">Send Us a Message</h3>
+                        <form id="contactForm" class="contact-form">
+                            <div class="form-group">
+                                <input type="text" id="name" name="name" placeholder="Full Name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="email" name="email" placeholder="Email Address" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="phone" name="phone" placeholder="Phone Number" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <select id="service" name="service" class="form-input" required>
+                                    <option value="">Select Service</option>
+                                    <option value="visa">Student Visa Applications</option>
+                                    <option value="university">University Application Support</option>
+                                    <option value="work">Work Authorization & OPT</option>
+                                    <option value="housing">Housing & Accommodation Law</option>
+                                    <option value="family">Family & Dependent Visas</option>
+                                    <option value="immigration">Post-Graduation Immigration</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <textarea id="message" name="message" placeholder="Tell us about your situation..." class="form-input form-textarea" required></textarea>
+                            </div>
+                            <button type="submit" class="form-button">Send Message</button>
+                        </form>
                     </div>
                     
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <h3>Phone</h3>
-                        <p>Main: (555) 123-4567<br>Emergency: (555) 987-6543</p>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <h3>Email</h3>
-                        <p>info@kannigantilaw.com<br>consultation@kannigantilaw.com</p>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <i class="fas fa-clock"></i>
-                        <h3>Hours</h3>
-                        <p>Mon-Fri: 9:00 AM - 6:00 PM<br>Sat: 10:00 AM - 2:00 PM<br>Emergency: 24/7</p>
+                    <!-- Contact Information -->
+                    <div>
+                        <div class="card mb-20">
+                            <h3 class="card-title">Office Locations</h3>
+                            <div style="margin-bottom: 25px;">
+                                <h4 style="color: var(--primary-purple); margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> New York Office</h4>
+                                <p class="card-description">123 Education Avenue<br>Suite 456<br>New York, NY 10001<br>Phone: +1 (555) 123-4567</p>
+                            </div>
+                            <div style="margin-bottom: 25px;">
+                                <h4 style="color: var(--primary-purple); margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> London Office</h4>
+                                <p class="card-description">45 Legal Street<br>Floor 3<br>London SW1A 1AA<br>Phone: +44 20 1234 5678</p>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--primary-purple); margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> Toronto Office</h4>
+                                <p class="card-description">789 Student Lane<br>Unit 12<br>Toronto, ON M5V 3A8<br>Phone: +1 (416) 123-4567</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="card-title">Business Hours</h3>
+                            <div class="card-description">
+                                <p><strong>Monday - Friday:</strong> 9:00 AM - 7:00 PM</p>
+                                <p><strong>Saturday:</strong> 10:00 AM - 4:00 PM</p>
+                                <p><strong>Sunday:</strong> Emergency consultations only</p>
+                                <p style="margin-top: 15px; color: var(--primary-purple);"><strong>24/7 Emergency Support Available</strong></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <form class="contact-form" id="contactForm">
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder=" " required>
-                        <label class="form-label">Full Name</label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="email" class="form-input" placeholder=" " required>
-                        <label class="form-label">Email Address</label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="tel" class="form-input" placeholder=" ">
-                        <label class="form-label">Phone Number</label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder=" ">
-                        <label class="form-label">Legal Matter Type</label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <textarea class="form-textarea" rows="5" placeholder=" " required></textarea>
-                        <label class="form-label">Message</label>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">Send Message</button>
-                </form>
-
-                <!-- Placeholder Map -->
-                <div style="margin-top: 4rem; text-align: center;">
-                    <div style="width: 100%; height: 300px; background: var(--dark-gray); border: 2px solid var(--medium-gray); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: var(--light-gray);">
-                        <div>
-                            <i class="fas fa-map" style="font-size: 3rem; color: var(--primary-purple); margin-bottom: 1rem;"></i>
-                            <p>Interactive Map Placeholder</p>
-                            <p style="font-size: 0.9rem;">123 Legal Plaza, Downtown District</p>
-                        </div>
+                
+                <!-- Map Placeholder -->
+                <div class="card" style="margin-top: 40px; padding: 0; overflow: hidden;">
+                    <div style="
+                        height: 300px;
+                        background: linear-gradient(45deg, var(--dark-gray), var(--primary-purple));
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--white);
+                        font-size: 1.2rem;
+                        font-weight: 600;
+                    ">
+                        <i class="fas fa-map" style="margin-right: 10px;"></i>
+                        Interactive Map Placeholder
                     </div>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- ===== BLOG/INSIGHTS PAGE ===== -->
-    <div class="page" id="blog-page">
-        <section class="section" style="padding-top: 8rem;">
+    <!-- ================================================
+         BLOG/INSIGHTS PAGE
+         ================================================ -->
+    <div id="blog" class="page">
+        <section class="section">
             <div class="container">
                 <h2 class="section-title">Legal Insights & News</h2>
-                <p class="section-subtitle">Stay informed with the latest legal developments, insights, and expert analysis from our team.</p>
                 
-                <div class="blog-grid">
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <i class="fas fa-passport"></i>
-                        </div>
+                <div class="grid grid-3">
+                    <!-- Blog Post 1 -->
+                    <div class="blog-card">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=200&fit=crop" alt="Student Visa Updates" class="blog-image">
                         <div class="blog-content">
-                            <p class="blog-date">September 1, 2025</p>
-                            <h3 class="blog-title">Immigration and Foreigners Act, 2025: A New Era of Border Security</h3>
-                            <p class="blog-excerpt">The new Immigration and Foreigners Act, 2025, which came into force on September 1, 2025, replaces four colonial-era immigration laws and introduces stringent penalties for forged travel documents and other violations, aiming to reinforce border security and immigration control.</p>
-                            <a href="#" class="read-more">Read More →</a>
+                            <h3 class="blog-title">2025 Student Visa Policy Updates: What You Need to Know</h3>
+                            <p class="blog-excerpt">Recent changes to international student visa policies across major study destinations and their impact on applications.</p>
+                            <p class="blog-date">March 15, 2025</p>
                         </div>
-                    </article>
+                    </div>
                     
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <i class="fas fa-calculator"></i>
-                        </div>
+                    <!-- Blog Post 2 -->
+                    <div class="blog-card">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=200&fit=crop" alt="Work Authorization" class="blog-image">
                         <div class="blog-content">
-                            <p class="blog-date">April 1, 2026</p>
-                            <h3 class="blog-title">Income-tax Act, 2025: Modernizing Direct Taxation</h3>
-                            <p class="blog-excerpt">The new Income-tax Act, 2025, passed by both houses of Parliament in mid-August 2025 and receiving Presidential assent on August 21, 2025, modernizes direct taxation by replacing the 1961 Act, simplifies compliance, and introduces a unified "Tax Year" concept effective from April 1, 2026.</p>
-                            <a href="#" class="read-more">Read More →</a>
+                            <h3 class="blog-title">Understanding OPT Extensions: Maximizing Your Work Opportunities</h3>
+                            <p class="blog-excerpt">A comprehensive guide to Optional Practical Training extensions and how to leverage them for career advancement.</p>
+                            <p class="blog-date">March 8, 2025</p>
                         </div>
-                    </article>
+                    </div>
                     
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <i class="fas fa-trophy"></i>
-                        </div>
+                    <!-- Blog Post 3 -->
+                    <div class="blog-card">
+                        <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=200&fit=crop" alt="UK Education" class="blog-image">
                         <div class="blog-content">
-                            <p class="blog-date">August 2025</p>
-                            <h3 class="blog-title">National Sports Governance Act, 2025: Transforming Sports Administration</h3>
-                            <p class="blog-excerpt">The National Sports Governance Act, 2025, passed by both houses of Parliament in August 2025, establishes a statutory structure for the governance of sports bodies, embeds ethical codes, dispute resolution mechanisms, and aligns with Olympic and Paralympic frameworks.</p>
-                            <a href="#" class="read-more">Read More →</a>
+                            <h3 class="blog-title">Post-Brexit UK Education: New Opportunities for International Students</h3>
+                            <p class="blog-excerpt">How Brexit has reshaped the UK education landscape and created new pathways for international students.</p>
+                            <p class="blog-date">February 28, 2025</p>
                         </div>
-                    </article>
+                    </div>
                     
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <i class="fas fa-mountain"></i>
-                        </div>
+                    <!-- Blog Post 4 -->
+                    <div class="blog-card">
+                        <img src="https://placehold.co/400x200?text=Canada+Immigration" alt="Canadian Immigration" class="blog-image">
                         <div class="blog-content">
-                            <p class="blog-date">August 21, 2025</p>
-                            <h3 class="blog-title">Mines and Minerals Amendment Act, 2025: Strengthening Critical Mineral Strategy</h3>
-                            <p class="blog-excerpt">The Mines and Minerals (Development and Regulation) Amendment Act, 2025, receiving Presidential assent on August 21, 2025, introduces mineral exchanges, allows limited lease extensions (up to 10–30%), expands the mandate of the National Mineral Exploration and Development Trust, and strengthens critical mineral strategy.</p>
-                            <a href="#" class="read-more">Read More →</a>
+                            <h3 class="blog-title">Canada's New Immigration Pathways for Graduates</h3>
+                            <p class="blog-excerpt">Exploring the latest permanent residency options available to international students graduating from Canadian institutions.</p>
+                            <p class="blog-date">February 20, 2025</p>
                         </div>
-                    </article>
+                    </div>
                     
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <i class="fas fa-gamepad"></i>
-                        </div>
+                    <!-- Blog Post 5 -->
+                    <div class="blog-card">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop" alt="Housing Rights" class="blog-image">
                         <div class="blog-content">
-                            <p class="blog-date">August 21, 2025</p>
-                            <h3 class="blog-title">Online Gaming Bill, 2025: Regulating the Digital Gaming Landscape</h3>
-                            <p class="blog-excerpt">The Promotion and Regulation of Online Gaming Bill, 2025, passed by Lok Sabha on August 20 and Rajya Sabha on August 21, 2025, categorizes games into e-sports, educational/social games, and money-based games, with e-sports encouraged and betting-based games banned, imposing fines up to ₹1 crore and jail up to three years.</p>
-                            <a href="#" class="read-more">Read More →</a>
+                            <h3 class="blog-title">International Student Housing Rights: Know Your Legal Protections</h3>
+                            <p class="blog-excerpt">Essential legal knowledge about tenant rights and housing protections for international students.</p>
+                            <p class="blog-date">February 12, 2025</p>
                         </div>
-                    </article>
+                    </div>
                     
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <i class="fas fa-ship"></i>
-                        </div>
+                    <!-- Blog Post 6 -->
+                    <div class="blog-card">
+                        <img src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=400&h=200&fit=crop" alt="Application Tips" class="blog-image">
                         <div class="blog-content">
-                            <p class="blog-date">August 11, 2025</p>
-                            <h3 class="blog-title">Carriage of Goods by Sea Act, 2025: Modernizing Maritime Transport</h3>
-                            <p class="blog-excerpt">The Carriage of Goods by Sea Act, 2025, passed by Lok Sabha on March 28, 2025, and Rajya Sabha on August 11, 2025, replaces the 1925 law, updates the legal framework for maritime cargo transport to align with Hague–Visby and Hamburg Rules, and addresses multimodal transport concerns.</p>
-                            <a href="#" class="read-more">Read More →</a>
+                            <h3 class="blog-title">Common Visa Application Mistakes to Avoid in 2025</h3>
+                            <p class="blog-excerpt">Learn from the most frequent errors in student visa applications and how to prevent them.</p>
+                            <p class="blog-date">February 5, 2025</p>
                         </div>
-                    </article>
+                    </div>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- ===== FOOTER ===== -->
+    <!-- Chat Widget -->
+    <div class="chat-launcher" id="chatLauncher" title="Chat with us">
+        <i class="fas fa-comments"></i>
+    </div>
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-header">
+            <strong>Live Chat</strong>
+            <button class="form-button" style="padding: 6px 12px; border-radius: 16px;" onclick="toggleChat()">Close</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <p class="card-description">Hi! How can we help you today?</p>
+        </div>
+        <div class="chat-input">
+            <input id="chatInput" placeholder="Type your message..." />
+            <button onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- ================================================
+         FOOTER
+         ================================================ -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Kanniganti & Co.</h3>
-                    <p>A modern law firm dedicated to providing exceptional legal services with integrity, innovation, and results. Contact us today to discuss your legal needs.</p>
+                    <h3>Pharos</h3>
+                    <p>Your trusted partner in international education law. We provide comprehensive legal guidance for students pursuing higher education and career opportunities abroad.</p>
                 </div>
-                
                 <div class="footer-section">
-                    <h3>Practice Areas</h3>
-                    <p><a href="#">Corporate Law</a></p>
-                    <p><a href="#">Litigation</a></p>
-                    <p><a href="#">Intellectual Property</a></p>
-                    <p><a href="#">Real Estate</a></p>
-                    <p><a href="#">Family Law</a></p>
+                    <h3>Quick Links</h3>
+                    <p><a href="#" onclick="showPage('home')">Home</a></p>
+                    <p><a href="#" onclick="showPage('about')">About Us</a></p>
+                    <p><a href="#" onclick="showPage('services')">Services</a></p>
+                    <p><a href="#" onclick="showPage('contact')">Contact</a></p>
+                    <p><a href="#" onclick="showPage('blog')">Insights</a></p>
+                    <p><a href="#" onclick="showPage('resources')">Resources</a></p>
+                    <p><a href="#" onclick="showPage('tools')">Tools</a></p>
+                    <p><a href="#" onclick="showPage('support')">Support</a></p>
+                    <p><a href="#" onclick="showPage('legal')">Legal</a></p>
                 </div>
-                
+                <div class="footer-section">
+                    <h3>Legal Services</h3>
+                    <p><a href="#" onclick="showPage('services')">Student Visa Applications</a></p>
+                    <p><a href="#" onclick="showPage('services')">University Application Support</a></p>
+                    <p><a href="#" onclick="showPage('services')">Work Authorization</a></p>
+                    <p><a href="#" onclick="showPage('services')">Immigration Planning</a></p>
+                </div>
                 <div class="footer-section">
                     <h3>Contact Info</h3>
-                    <p>123 Legal Plaza<br>Downtown District<br>Metropolitan City, MC 12345</p>
-                    <p>Phone: (555) 123-4567</p>
-                    <p>Email: info@kannigantilaw.com</p>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>Office Hours</h3>
-                    <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                    <p>Saturday: 10:00 AM - 2:00 PM</p>
-                    <p>Sunday: Closed</p>
-                    <p>Emergency consultations available 24/7</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@globalpathegal.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Multiple office locations worldwide</p>
                 </div>
             </div>
-            
             <div class="footer-bottom">
-                <p>&copy; 2024 Kanniganti & Co. All rights reserved.</p>
-                <p style="margin-top: 1rem; font-size: 0.8rem;">
-                    <strong>Disclaimer:</strong> This website is for informational purposes only and does not constitute legal advice. 
-                    The information contained herein is not intended to create an attorney-client relationship. 
-                    Please contact our office directly to discuss your specific legal needs. 
-                    Prior results do not guarantee a similar outcome. 
-                    Licensed to practice law in [State/Jurisdiction].
-                </p>
+                <p>&copy; 2025 Pharos. All rights reserved. | 
+                <strong>Legal Disclaimer:</strong> This website is for informational purposes only and does not constitute legal advice. 
+                Attorney-client relationships are not formed through this website. Individual results may vary based on specific circumstances. 
+                Consult with a qualified attorney for legal advice regarding your specific situation. 
+                Pharos is not responsible for the accuracy of information on external linked websites. 
+                By using this website, you acknowledge that you have read and understood these terms.</p>
             </div>
         </div>
     </footer>
 
+    <!-- ================================================
+         JAVASCRIPT
+         ================================================ -->
     <script>
-        // ===== JAVASCRIPT FOR INTERACTIVITY =====
+        // ================================================
+        // PRELOADER FUNCTIONALITY
+        // Hide preloader after page loads
+        // ================================================
         
-        // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // ===== PRELOADER ANIMATION =====
+        window.addEventListener('load', function() {
             const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.classList.add('hide');
+            }, 2000); // Show preloader for 2 seconds
+        });
+
+        // ================================================
+        // NAVBAR SCROLL BEHAVIOR
+        // Show/hide navbar based on scroll direction
+        // ================================================
+        
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             
-            // Hide preloader after page loads
-            window.addEventListener('load', function() {
-                setTimeout(() => {
-                    preloader.classList.add('hidden');
-                }, 1500); // Show preloader for 1.5 seconds
-            });
-            
-            // ===== NAVBAR SCROLL BEHAVIOR =====
-            const navbar = document.getElementById('navbar');
-            
-            // Show navbar immediately when page loads
-            navbar.classList.add('visible');
-            
-            // Add scroll effect for navbar background opacity
-            function updateNavbar() {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                
-                // Change navbar background opacity based on scroll position
-                if (scrollTop > 50) {
-                    navbar.style.background = 'rgba(10, 10, 10, 0.98)';
-                    navbar.style.borderBottomColor = 'rgba(106, 13, 173, 0.4)';
-                } else {
-                    navbar.style.background = 'rgba(10, 10, 10, 0.95)';
-                    navbar.style.borderBottomColor = 'rgba(106, 13, 173, 0.2)';
-                }
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scrolling down - hide navbar
+                navbar.classList.remove('show');
+            } else {
+                // Scrolling up - show navbar
+                navbar.classList.add('show');
             }
             
-            window.addEventListener('scroll', function() {
-                requestAnimationFrame(updateNavbar);
-            });
-            
-            // ===== PAGE NAVIGATION SYSTEM =====
-            const navLinks = document.querySelectorAll('.nav-link');
+            lastScrollTop = scrollTop;
+        });
+
+        // ================================================
+        // PAGE NAVIGATION SYSTEM
+        // Handle multi-page navigation without page reload
+        // ================================================
+        
+        function showPage(pageId) {
+            // Hide all pages
             const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
             
-            // Function to show specific page
-            function showPage(pageId) {
-                // Hide all pages
-                pages.forEach(page => {
-                    page.classList.remove('active');
-                });
-                
-                // Show selected page
-                const targetPage = document.getElementById(pageId + '-page');
-                if (targetPage) {
-                    targetPage.classList.add('active');
-                }
-                
-                // Update active nav link
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                });
-                
-                const activeLink = document.querySelector(`[data-page="${pageId}"]`);
-                if (activeLink) {
-                    activeLink.classList.add('active');
-                }
-                
-                // Smooth scroll to top
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+            // Show selected page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
             }
             
-            // Add click event listeners to nav links
+            // Update active navigation link
+            const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const pageId = this.getAttribute('data-page');
-                    showPage(pageId);
-                });
+                link.classList.remove('active');
             });
             
-            // Handle CTA button navigation
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('cta-button') && e.target.hasAttribute('data-page')) {
-                    e.preventDefault();
-                    const pageId = e.target.getAttribute('data-page');
-                    showPage(pageId);
+            // Find and activate corresponding nav link
+            const activeLink = document.querySelector(`[onclick="showPage('${pageId}')"]`);
+            if (activeLink && activeLink.classList.contains('nav-link')) {
+                activeLink.classList.add('active');
+            }
+            
+            // Scroll to top of page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================================================
+        // ACCORDION FUNCTIONALITY
+        // Toggle accordion sections on services page
+        // ================================================
+        
+        function toggleAccordion(header) {
+            const accordion = header.parentElement;
+            const content = accordion.querySelector('.accordion-content');
+            
+            // Close all other accordions
+            const allAccordions = document.querySelectorAll('.accordion');
+            allAccordions.forEach(acc => {
+                if (acc !== accordion) {
+                    acc.classList.remove('active');
                 }
             });
             
-            // ===== ACCORDION FUNCTIONALITY =====
-            const accordionItems = document.querySelectorAll('.accordion-item');
-            
-            accordionItems.forEach(item => {
-                const header = item.querySelector('.accordion-header');
-                const content = item.querySelector('.accordion-content');
-                
-                header.addEventListener('click', function() {
-                    const isActive = item.classList.contains('active');
-                    
-                    // Close all accordion items
-                    accordionItems.forEach(otherItem => {
-                        otherItem.classList.remove('active');
-                    });
-                    
-                    // Toggle current item
-                    if (!isActive) {
-                        item.classList.add('active');
-                    }
-                });
-            });
-            
-            // ===== CONTACT FORM HANDLING =====
+            // Toggle current accordion
+            accordion.classList.toggle('active');
+        }
+
+        // ================================================
+        // CONTACT FORM HANDLING
+        // Form validation and submission with animations
+        // ================================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
             const contactForm = document.getElementById('contactForm');
             
             if (contactForm) {
                 contactForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
-                    // Get form button
-                    const submitBtn = this.querySelector('.submit-btn');
-                    const originalText = submitBtn.textContent;
+                    // Get form elements
+                    const name = document.getElementById('name');
+                    const email = document.getElementById('email');
+                    const service = document.getElementById('service');
+                    const message = document.getElementById('message');
                     
-                    // Show loading state
-                    submitBtn.textContent = 'Sending...';
-                    submitBtn.style.background = 'var(--light-gray)';
-                    submitBtn.disabled = true;
+                    // Validation flags
+                    let isValid = true;
                     
-                    // Simulate form submission
-                    setTimeout(() => {
-                        // Show success message
-                        submitBtn.textContent = 'Message Sent!';
-                        submitBtn.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
-                        
-                        // Reset form
-                        this.reset();
-                        
-                        // Reset button after 3 seconds
-                        setTimeout(() => {
-                            submitBtn.textContent = originalText;
-                            submitBtn.style.background = 'linear-gradient(45deg, var(--primary-purple), var(--secondary-purple))';
-                            submitBtn.disabled = false;
-                        }, 3000);
-                    }, 1500);
-                });
-            }
-            
-            // ===== SMOOTH SCROLL ENHANCEMENTS =====
-            // Add intersection observer for scroll animations
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+                    // Remove previous error classes
+                    [name, email, service, message].forEach(field => {
+                        field.classList.remove('form-error');
+                    });
+                    
+                    // Validate required fields
+                    if (!name.value.trim()) {
+                        name.classList.add('form-error');
+                        isValid = false;
+                    }
+                    
+                    if (!email.value.trim() || !isValidEmail(email.value)) {
+                        email.classList.add('form-error');
+                        isValid = false;
+                    }
+                    
+                    if (!service.value) {
+                        service.classList.add('form-error');
+                        isValid = false;
+                    }
+                    
+                    if (!message.value.trim()) {
+                        message.classList.add('form-error');
+                        isValid = false;
+                    }
+                    
+                    if (isValid) {
+                        // Simulate form submission success
+                        alert('Thank you for your message! We will get back to you within 24 hours.');
+                        contactForm.reset();
+                    } else {
+                        // Show error message
+                        alert('Please fill in all required fields correctly.');
                     }
                 });
-            }, observerOptions);
-            
-            // Observe cards and sections for scroll animations
-            const animatedElements = document.querySelectorAll('.card, .team-card, .blog-card, .contact-item');
-            
-            animatedElements.forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(el);
-            });
-            
-            // ===== WAVE ANIMATION FOR HERO BACKGROUND =====
-            const heroVideo = document.querySelector('.hero-video');
-            if (heroVideo) {
-                // Create animated wave effect using CSS custom properties
-                let waveOffset = 0;
-                
-                function animateWave() {
-                    waveOffset += 0.02;
-                    const wave1 = Math.sin(waveOffset) * 20;
-                    const wave2 = Math.cos(waveOffset * 0.7) * 15;
-                    
-                    heroVideo.style.transform = `translateY(${wave1}px) translateX(${wave2}px) scale(1.05)`;
-                    requestAnimationFrame(animateWave);
-                }
-                
-                animateWave();
             }
-            
-            // ===== MOBILE RESPONSIVENESS =====
-            const mobileToggle = document.querySelector('.mobile-toggle');
-            const navMenu = document.querySelector('.nav-menu');
-            
-            if (mobileToggle) {
-                mobileToggle.addEventListener('click', function() {
-                    navMenu.classList.toggle('active');
-                    this.classList.toggle('active');
-                });
-            }
-            
-            // Close mobile menu when clicking nav links
-            navLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (navMenu.classList.contains('active')) {
-                        navMenu.classList.remove('active');
-                        mobileToggle.classList.remove('active');
-                    }
-                });
-            });
-            
-            // ===== ADDITIONAL HOVER EFFECTS =====
-            // Add ripple effect to buttons
-            function createRipple(event) {
-                const button = event.currentTarget;
-                const circle = document.createElement('span');
-                const diameter = Math.max(button.clientWidth, button.clientHeight);
-                const radius = diameter / 2;
-                
-                circle.style.width = circle.style.height = `${diameter}px`;
-                circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-                circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-                circle.classList.add('ripple');
-                
-                const ripple = button.getElementsByClassName('ripple')[0];
-                if (ripple) {
-                    ripple.remove();
-                }
-                
-                button.appendChild(circle);
-            }
-            
-            // Apply ripple effect to buttons
-            const buttons = document.querySelectorAll('.cta-button, .submit-btn');
-            buttons.forEach(button => {
-                button.addEventListener('click', createRipple);
-            });
-            
         });
         
-        // ===== CSS FOR WAVE ANIMATION =====
-        const waveKeyframes = `
-            @keyframes wave {
-                0%, 100% {
-                    background-position: 0% 50%;
+        // Email validation helper function
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // ================================================
+        // SMOOTH ANIMATIONS ON SCROLL
+        // Trigger animations when elements come into view
+        // ================================================
+        
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
                 }
-                50% {
-                    background-position: 100% 50%;
-                }
-            }
-            
-            .ripple {
-                position: absolute;
-                border-radius: 50%;
-                transform: scale(0);
-                animation: ripple-animation 0.6s linear;
-                background-color: rgba(255, 255, 255, 0.3);
-            }
-            
-            @keyframes ripple-animation {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-            
-            /* Mobile Navigation Styles */
-            @media (max-width: 768px) {
-                .nav-menu {
-                    position: absolute;
-                    top: 100%;
-                    left: 0;
-                    right: 0;
-                    background: rgba(10, 10, 10, 0.98);
-                    flex-direction: column;
-                    padding: 2rem;
-                    transform: translateY(-100%);
-                    opacity: 0;
-                    visibility: hidden;
-                    transition: all 0.3s ease;
-                }
-                
-                .nav-menu.active {
-                    transform: translateY(0);
-                    opacity: 1;
-                    visibility: visible;
-                }
-                
-                .mobile-toggle.active span:nth-child(1) {
-                    transform: rotate(45deg) translate(5px, 5px);
-                }
-                
-                .mobile-toggle.active span:nth-child(2) {
-                    opacity: 0;
-                }
-                
-                .mobile-toggle.active span:nth-child(3) {
-                    transform: rotate(-45deg) translate(7px, -6px);
-                }
+            });
+        }, observerOptions);
+        
+        // Observe all cards for animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card:not(.fade-in):not(.fade-in-delay)');
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+        });
+
+        // ================================================
+        // MOBILE MENU TOGGLE
+        // Handle mobile navigation menu
+        // ================================================
+        
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+                menuToggle.classList.toggle('active');
+            });
+        }
+
+        // ================================================
+        // BACKGROUND ANIMATION
+        // CSS keyframe animation for hero background
+        // ================================================
+        
+        // CSS Animation defined in styles above:
+        // @keyframes gradient-shift for hero background
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes gradient-shift {
+                0% { background-position: 0% 50%; }
+                25% { background-position: 100% 50%; }
+                50% { background-position: 100% 100%; }
+                75% { background-position: 0% 100%; }
+                100% { background-position: 0% 50%; }
             }
         `;
+        document.head.appendChild(style);
+
+        // ================================================
+        // UTILITY FUNCTIONS
+        // Helper functions for various interactions
+        // ================================================
         
-        // Inject additional CSS
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = waveKeyframes;
-        document.head.appendChild(styleSheet);
+        // Smooth scroll to element
+        function smoothScrollTo(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
         
+        // Add loading states to buttons
+        function addLoadingState(button) {
+            const originalText = button.textContent;
+            button.textContent = 'Loading...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+            }, 2000);
+        }
+        
+        // Initialize page functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Pharos website initialized successfully!');
+            
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+
+        // Booking via mailto
+        function submitBookingEmail(e) {
+            e.preventDefault();
+            const form = e.target;
+            const [nameEl, emailEl, dateEl, timeEl, topicEl] = form.querySelectorAll('.form-input');
+            const subject = encodeURIComponent('Consultation Booking Request');
+            const body = encodeURIComponent(
+                `Name: ${nameEl.value}\nEmail: ${emailEl.value}\nPreferred Date: ${dateEl.value}\nPreferred Time: ${timeEl.value}\nTopic: ${topicEl.value}`
+            );
+            const mailto = `mailto:info@globalpathegal.com?subject=${subject}&body=${body}`;
+            window.location.href = mailto;
+        }
+
+        // Cost calculator logic (simple illustrative model)
+        function calculateCost() {
+            const country = document.getElementById('calcCountry').value;
+            const duration = parseInt(document.getElementById('calcDuration').value || '0', 10);
+            const result = document.getElementById('calcResult');
+            if (!duration || duration <= 0) {
+                result.textContent = 'Please enter a valid duration.';
+                return;
+            }
+            const baseFees = { USA: 510, UK: 600, Canada: 350, Australia: 650, Europe: 400 }; // visa + misc
+            const monthlyLegal = { USA: 20, UK: 18, Canada: 16, Australia: 18, Europe: 15 }; // support/consult spread
+            const total = (baseFees[country] || 450) + (monthlyLegal[country] || 15) * duration;
+            result.textContent = `Estimated total (${country}): $${total.toFixed(2)} (incl. visa/misc + support)`;
+        }
+
+        // ================================================
+        // CHAT WIDGET LOGIC
+        // ================================================
+        const chatLauncher = document.getElementById('chatLauncher');
+        const chatPanel = document.getElementById('chatPanel');
+        const chatBody = document.getElementById('chatBody');
+        const chatInput = document.getElementById('chatInput');
+
+        function toggleChat() {
+            if (!chatPanel) return;
+            const isOpen = chatPanel.style.display === 'block';
+            chatPanel.style.display = isOpen ? 'none' : 'block';
+        }
+
+        function appendChatMessage(text, from = 'user') {
+            if (!chatBody) return;
+            const bubble = document.createElement('div');
+            bubble.className = 'card-description';
+            bubble.style.margin = '8px 0';
+            bubble.style.opacity = '1';
+            bubble.textContent = (from === 'user' ? 'You: ' : 'Agent: ') + text;
+            chatBody.appendChild(bubble);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            if (!chatInput || !chatInput.value.trim()) return;
+            const text = chatInput.value.trim();
+            appendChatMessage(text, 'user');
+            chatInput.value = '';
+            setTimeout(() => {
+                appendChatMessage('Thanks for your message. A team member will reply shortly.', 'agent');
+            }, 600);
+        }
+
+        if (chatLauncher) {
+            chatLauncher.addEventListener('click', toggleChat);
+        }
     </script>
 </body>
 </html>
